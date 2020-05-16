@@ -3,6 +3,8 @@ package com.example.thu_helper;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.thu_helper.data.LoginDataSource;
+import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.ui.login.LoginActivity;
 import com.example.thu_helper.ui.register.RegisterActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -14,7 +16,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        Intent intent=new Intent(MainActivity.this, LoginActivity.class);
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
     }
 
