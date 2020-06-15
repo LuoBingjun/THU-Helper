@@ -6,17 +6,82 @@
     android:layout_height="match_parent"
     tools:context=".ui.notifications.NotificationsFragment">
 
-    <TextView
-        android:id="@+id/text_notifications"
+    <RelativeLayout
+        android:id="@+id/pic"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/h_back"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/colorAccent" />
+
+        <ImageView
+            android:id="@+id/h_head"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/h_back"
+            android:layout_marginBottom="20dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            android:text="张三" />
+
+    </RelativeLayout>
+
+    <com.example.thu_helper.components.Submenu
+        android:id="@+id/personal_info"
+        app:src="@drawable/ic_gerenxinxi"
+        app:text="个人信息"
+        app:layout_constraintTop_toBottomOf="@id/pic"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sub_menu_height"
+        />
+
+    <com.example.thu_helper.components.Submenu
+        android:id="@+id/order_dilivery"
+        app:src="@drawable/ic_dingdan"
+        app:text="订单派送中"
+        app:layout_constraintTop_toBottomOf="@id/personal_info"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sub_menu_height"
+        />
+
+    <com.example.thu_helper.components.Submenu
+        android:id="@+id/history_dilivery"
+        app:src="@drawable/ic_lishi"
+        app:text="历史订单"
+        app:layout_constraintTop_toBottomOf="@id/order_dilivery"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sub_menu_height"
+        />
+
+    <com.example.thu_helper.components.Submenu
+        android:id="@+id/version_update"
+        app:src="@drawable/ic_banbengengxin"
+        app:text="版本更新"
+        app:layout_constraintTop_toBottomOf="@id/history_dilivery"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sub_menu_height"
+        />
+
+    <com.example.thu_helper.components.Submenu
+        android:id="@+id/about_us"
+        app:src="@drawable/ic_guanyuwomen"
+        app:text="关于我们"
+        app:layout_constraintTop_toBottomOf="@id/version_update"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sub_menu_height"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
