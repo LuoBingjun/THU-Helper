@@ -9,11 +9,11 @@
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_order_fill_24dp"
-        android:title="Order" />
+        android:title="@string/title_order" />
 
     <item
         android:id="@+id/navigation_notifications"
         android:icon="@drawable/ic_my_fill_24dp"
-        android:title="My" />
+        android:title="@string/title_my" />
 
 </menu>
