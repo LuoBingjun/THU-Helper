@@ -1,27 +1,22 @@
 package com.example.thu_helper.ui.home;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.core.content.ContextCompat;
 
 import com.example.thu_helper.R;
 
 import java.util.List;
-import java.util.Map;
 
 public class ListViewAdapter extends BaseAdapter {
-    private List<Map<String, Object>> data;
+    private List<Record> data;
     private LayoutInflater layoutInflater;
     private Context context;
-    public ListViewAdapter(Context context, List<Map<String, Object>> data){
+    public ListViewAdapter(Context context, List<Record> data){
         this.context = context;
         this.data = data;
         this.layoutInflater = LayoutInflater.from(context);
@@ -33,14 +28,14 @@ public class ListViewAdapter extends BaseAdapter {
     public final class Component{
         public ImageView image;
         public TextView title;
-        public TextView info;
+        public TextView content;
         public TextView loc;
         public TextView time;
 
         Component(View view){
-            this.image=(ImageView)view.findViewById(R.id.image);
-            this.title=(TextView)view.findViewById(R.id.title);
-            this.info=(TextView)view.findViewById(R.id.info);
+            this.image = (ImageView)view.findViewById(R.id.image);
+            this.title = (TextView)view.findViewById(R.id.title);
+            this.content = (TextView)view.findViewById(R.id.info);
             this.loc = (TextView)view.findViewById(R.id.loc);
             this.time = (TextView)view.findViewById(R.id.time);
         }
@@ -74,16 +69,15 @@ public class ListViewAdapter extends BaseAdapter {
         }else{
             component=(Component)convertView.getTag();
         }
+
         //绑定数据
-        component.image.setBackgroundResource((Integer)data.get(position).get("image"));
-        component.title.setText((String)data.get(position).get("title"));
-        component.info.setText((String)data.get(position).get("info"));
-        component.loc.setText((String)data.get(position).get("loc"));
-//        Drawable drawable = ContextCompat.getDrawable(context,R.drawable.ic_clock_32dp);
-//        drawable.setBounds(0,0,drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-//        component.loc.setCompoundDrawables(drawable,null,null,null);
-//        component.loc.setCompoundDrawablePadding(10);
-        component.time.setText((String)data.get(position).get("time"));
+        Record record = data.get(position);
+
+        component.image.setBackgroundResource(R.drawable.ic_order_128dp);
+        component.title.setText(record.title);
+        component.content.setText(record.content);
+        component.loc.setText(record.title);
+        component.time.setText(new java.text.SimpleDateFormat("MM-dd hh:mm").format(record.time));
         return convertView;
     }
 }
