@@ -1,6 +1,7 @@
 package com.example.thu_helper.ui.order;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
@@ -25,7 +27,8 @@ import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 public class OrderFragment extends Fragment {
 
     private OrderViewModel orderViewModel;
-    QMUIGroupListView mGroupListView;
+    private View mFakeStatusBar;
+    private QMUIGroupListView mGroupListView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -34,6 +37,15 @@ public class OrderFragment extends Fragment {
         orderViewModel =
                 ViewModelProviders.of(this).get(OrderViewModel.class);
         View root = inflater.inflate(R.layout.fragment_order, container, false);
+
+        // Set height of fake_status_bar
+        mFakeStatusBar = root.findViewById(R.id.fake_status_bar);
+        Resources resources = getContext().getResources();
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        int statusHeight = resources.getDimensionPixelSize(resourceId);
+        ConstraintLayout.LayoutParams params=new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, statusHeight);
+        mFakeStatusBar.setLayoutParams(params);
+
         mGroupListView = root.findViewById(R.id.groupListView);
         initGroupListView(root);
 
