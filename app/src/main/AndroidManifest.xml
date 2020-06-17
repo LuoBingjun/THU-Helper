@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:hardwareAccelerated="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".ui.detail.DetailActivity"
             android:label="@string/title_detail"/>
@@ -30,5 +31,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

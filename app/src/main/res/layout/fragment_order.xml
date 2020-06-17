@@ -4,204 +4,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/DimGray"
+    android:background="@color/qmui_config_color_white"
     tools:context=".ui.order.OrderFragment">
 
-    <LinearLayout
-        android:id="@+id/title"
-        app:layout_constraintTop_toTopOf="parent"
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
+        android:layout_height="400dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/qmui_config_color_white">
 
-        <TextView
-            android:id="@+id/title_name"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="标题"
-            android:textSize="20sp"/>
-
-        <EditText
-            android:id="@+id/title_context"
-            android:layout_marginLeft="5dp"
+        <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
+            android:id="@+id/groupListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="帮忙取快递"/>
-    </LinearLayout>
+            />
 
-    <LinearLayout
-        android:id="@+id/location"
-        app:layout_constraintTop_toBottomOf="@id/title"
+    </ScrollView>
+
+    <EditText
+        android:minLines="5"
+        android:gravity="top"
+        android:text="1-300个字符"
+        android:textSize="15sp"
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp"
-        android:layout_marginTop="2dp">
+        android:layout_height="180dp"
+        />
 
-        <TextView
-            android:id="@+id/location_name"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="地点"
-            android:textSize="20sp"/>
-
-        <EditText
-            android:id="@+id/location_context"
-            android:layout_marginLeft="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="紫荆14号楼后小树林"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/start_time"
-        app:layout_constraintTop_toBottomOf="@id/location"
+    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+        android:id="@+id/sendBtn"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp"
-        android:layout_marginTop="2dp">
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/btn_filled_blue_bg_normal"
+        android:text="发送" />
 
-        <TextView
-            android:id="@+id/start_time_name"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:text="*开始时间："
-            android:textSize="20sp"/>
-
-        <EditText
-            android:id="@+id/start_time_context"
-            android:layout_marginLeft="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="2017-02-06 09:00"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/end_time"
-        app:layout_constraintTop_toBottomOf="@id/start_time"
+    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+        android:id="@+id/cancelBtn"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp"
-        android:layout_marginTop="2dp">
-
-        <TextView
-            android:id="@+id/end_time_name"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:text="*结束时间："
-            android:textSize="20sp"/>
-
-        <EditText
-            android:id="@+id/end_time_context"
-            android:layout_marginLeft="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="2017-02-06 18:00"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/remark"
-        app:layout_constraintTop_toBottomOf="@id/end_time"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp"
-        android:layout_marginTop="2dp">
-
-        <TextView
-            android:id="@+id/remark_name"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="*备注"
-            android:textSize="20sp"/>
-
-        <EditText
-            android:id="@+id/remark_context"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="@null"
-            android:hint="1-300个字符"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/custom_field"
-        app:layout_constraintTop_toBottomOf="@id/remark"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp"
-        android:layout_marginTop="2dp">
-
-        <TextView
-            android:id="@+id/custom_field_name"
-            android:layout_width="135dp"
-            android:layout_height="wrap_content"
-            android:text="自定义字段1："
-            android:textSize="20sp"/>
-
-        <EditText
-            android:id="@+id/custom_field_context"
-            android:layout_marginLeft="5dp"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="自定义信息"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/button_field"
-        app:layout_constraintTop_toBottomOf="@id/custom_field"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@color/white"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp"
-        android:layout_marginTop="2dp">
-
-        <Button
-            android:id="@+id/release_botton"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="发布"
-            android:textColor="@color/white"
-            android:background="@color/colorAccent"
-            android:textSize="20sp" />
-
-        <Button
-            android:id="@+id/clean_button"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="清空"
-            android:textSize="20sp" />
-    </LinearLayout>
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="取消"
+        android:background="@color/btn_filled_blue_bg_normal" />
+</LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
