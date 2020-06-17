@@ -1,17 +1,11 @@
 package com.example.thu_helper.ui.detail;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
 
 import com.example.thu_helper.R;
-import com.example.thu_helper.ui.detail.DetailFragment;
-import com.example.thu_helper.ui.detail.DetailViewModel;
-import com.example.thu_helper.ui.detail.RecordDetail;
 
 import java.util.Date;
 
@@ -20,7 +14,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.detail_activity);
+        setContentView(R.layout.activity_detail);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
