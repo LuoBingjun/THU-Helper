@@ -6,11 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.thu_helper.ui.detail.DetailActivity;
 import com.example.thu_helper.R;
@@ -28,18 +29,11 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         List<Record> records = homeViewModel.getData().getValue();
 
-        // Init ListView
-        ListView listView = root.findViewById(R.id.listView);
-        listView.setAdapter(new ListViewAdapter(getActivity(), records));
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Record record = (Record) parent.getItemAtPosition(position);
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra("id", record.id);
-                startActivity(intent);
-            }
-        });
+        // Init RecyclerView
+        RecyclerView recyclerView = root.findViewById(R.id.recycleView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(new CardAdapter(records));
         return root;
     }
 

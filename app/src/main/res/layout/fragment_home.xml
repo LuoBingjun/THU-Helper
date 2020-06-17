@@ -12,10 +12,12 @@
         android:layout_height="wrap_content"
         android:iconifiedByDefault="false"
         android:queryHint="请输入搜索内容"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" >
 
-    <ListView
-        android:id="@+id/listView"
+    </SearchView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycleView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
