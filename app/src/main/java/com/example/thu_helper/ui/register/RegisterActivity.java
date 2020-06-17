@@ -1,6 +1,7 @@
 package com.example.thu_helper.ui.register;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,13 +14,21 @@ import android.widget.EditText;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.thu_helper.R;
-import com.example.thu_helper.ui.login.LoginActivity;
+import com.example.thu_helper.data.Result;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
     private RegisterViewModel registerViewModel;
@@ -96,13 +105,71 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
-                registeringProcessBar.setVisibility(View.VISIBLE);
-                System.out.println("点击注册按钮");
-                if(registerViewModel.register(registerEmail.getText().toString(),registerName.getText().toString()
-                        ,registerPassword.getText().toString())){
-                    finish();
-                };
+                new RegisterTask().execute(registerEmail.getText().toString(),
+                        registerName.getText().toString(),
+                        registerPassword.getText().toString());
             }
         });
+    }
+
+    private class RegisterTask extends AsyncTask<String, Integer, Result<Boolean>> {
+
+        // 方法1：onPreExecute（）
+        // 作用：执行 线程任务前的操作（UI线程）
+        @Override
+        protected void onPreExecute() {
+            registeringProcessBar.setVisibility(View.VISIBLE);
+        }
+
+        // 方法2：doInBackground（）
+        // 作用：接收输入参数、执行任务中的耗时操作、返回 线程任务执行的结果（子线程）
+        // 此处通过计算从而模拟“加载进度”的情况
+        @Override
+        protected Result<Boolean> doInBackground(String... params) {
+            String email = params[0];
+            String username = params[1];
+            String password = params[2];
+            try {
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("https://www.baidu.com")
+                        .build();
+                Call call = client.newCall(request);
+                Response response = call.execute();
+                if (response.isSuccessful()) {
+                    return new Result.Success<>(true);
+                }
+                return new Result.Error(new IOException("Login Error"));
+            } catch (Exception e) {
+                return new Result.Error(new IOException("Error logging in", e));
+            }
+        }
+
+        // 方法3：onProgressUpdate（）
+        // 作用：在主线程 显示线程任务执行的进度（UI线程）
+        @Override
+        protected void onProgressUpdate(Integer... progresses) {
+        }
+
+        // 方法4：onPostExecute（）
+        // 作用：接收线程任务执行结果、将执行结果显示到UI组件（UI线程）
+        @Override
+        protected void onPostExecute(Result<Boolean> result) {
+            registeringProcessBar.setVisibility(View.INVISIBLE);
+            if (result instanceof Result.Success) {
+                Boolean data = ((Result.Success<Boolean>) result).getData();
+                Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(getApplicationContext(), ((Result.Error) result).toString(), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        // 方法5：onCancelled()
+        // 作用：将异步任务设置为：取消状态（UI线程）
+        @Override
+        protected void onCancelled() {
+            registeringProcessBar.setVisibility(View.INVISIBLE);
+        }
     }
 }

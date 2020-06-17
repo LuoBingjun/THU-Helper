@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.thu_helper.R;
-import com.example.thu_helper.data.RegisterRepository;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,14 +14,8 @@ import java.util.regex.Pattern;
 public class RegisterViewModel extends ViewModel {
 
     private MutableLiveData<RegisterFormState> registerFormState = new MutableLiveData<>();
-    private RegisterRepository registerRepository;
 
-    public RegisterViewModel(RegisterRepository registerRepository){
-        this.registerRepository = registerRepository;
-    }
-
-    public boolean register(String email,String name,String password){
-        return registerRepository.register(email,name,password);
+    public RegisterViewModel(){
     }
 
     public void registerDataChanged(String email,String name,String password,String rePassword) {
