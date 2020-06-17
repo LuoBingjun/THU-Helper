@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+<LinearLayout
+    android:id="@+id/left_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="6dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+        <TextView
+            android:id="@+id/sendTime_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp">
+
+    <ImageView
+        android:id="@+id/userhead_left"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:focusable="false"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/ic_gerenxinxi"/>
+
+    <EditText
+        android:editable="false"
+        android:maxLines="5"
+        android:textSize="15sp"
+        android:id="@+id/chatContent_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/userhead_left"
+        android:layout_margin="5dp"
+        android:background="@drawable/bubble"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/chatUsername_left"
+        android:textColor="@color/white"
+        android:background="@color/grey"
+        android:textSize="10sp"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/chatContent_left"
+        android:layout_below="@id/userhead_left"/>
+
+</RelativeLayout>
+
+</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/right_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <TextView
+                android:id="@+id/sendTime_right"
+                android:text="6-18 0:49"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <ImageView
+                android:id="@+id/userhead_right"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:focusable="false"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/ic_gerenxinxi"/>
+
+            <EditText
+                android:editable="false"
+                android:maxLines="5"
+                android:textSize="15sp"
+                android:id="@+id/chatContent_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_margin="5dp"
+                android:layout_toLeftOf="@id/userhead_right"
+                android:background="@drawable/bubble"
+                android:textColor="#fff"/>
+
+            <TextView
+                android:id="@+id/chatUsername_right"
+                android:textColor="@color/white"
+                android:background="@color/grey"
+                android:textSize="10sp"
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/chatContent_right"
+                android:layout_below="@id/userhead_right"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+</LinearLayout>
