@@ -1,19 +1,15 @@
 package com.example.thu_helper.ui.register;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +22,6 @@ import com.example.thu_helper.utils.Global;
 
 import java.io.IOException;
 
-import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -35,10 +30,11 @@ import okhttp3.Response;
 public class RegisterActivity extends AppCompatActivity {
     private RegisterViewModel registerViewModel;
 
-    private EditText registerEmail;
-    private EditText registerName;
-    private EditText registerPassword;
-    private EditText rePassward;
+    private EditText mEmailEdit;
+    private EditText mNicknameEdit;
+    private EditText mUsernameEdit;
+    private EditText mPasswordEdit;
+    private EditText mRePasswardEdit;
     private Button registerButton;
     private ProgressBar registeringProcessBar;
 
@@ -50,10 +46,11 @@ public class RegisterActivity extends AppCompatActivity {
         registerViewModel = ViewModelProviders.of(this, new RegisterViewModelFactory())
                 .get(RegisterViewModel.class);
 
-        registerEmail = findViewById(R.id.registerEmail);
-        registerName = findViewById(R.id.registerName);
-        registerPassword = findViewById(R.id.registerPassword);
-        rePassward = findViewById(R.id.rePassword);
+        mEmailEdit = findViewById(R.id.emailEdit);
+        mUsernameEdit = findViewById(R.id.usernameEdit);
+        mNicknameEdit = findViewById(R.id.nicknameEdit);
+        mPasswordEdit = findViewById(R.id.passwordEdit);
+        mRePasswardEdit = findViewById(R.id.repasswordEdit);
         registerButton = findViewById(R.id.registerButton);
         registeringProcessBar = findViewById(R.id.registering);
 
@@ -65,16 +62,16 @@ public class RegisterActivity extends AppCompatActivity {
                 }
                 registerButton.setEnabled(registerFormState.isDataValid());
                 if(registerFormState.getEmailError() != null){
-                    registerEmail.setError(getString(registerFormState.getEmailError()));
+                    mEmailEdit.setError(getString(registerFormState.getEmailError()));
                 }
                 if(registerFormState.getUsernameError() != null){
-                    registerName.setError(getString(registerFormState.getUsernameError()));
+                    mNicknameEdit.setError(getString(registerFormState.getUsernameError()));
                 }
                 if(registerFormState.getPasswordError() != null){
-                    registerPassword.setError(getString(registerFormState.getPasswordError()));
+                    mPasswordEdit.setError(getString(registerFormState.getPasswordError()));
                 }
                 if(registerFormState.getRePasswordError() != null){
-                    rePassward.setError(registerFormState.getRePasswordString());
+                    mRePasswardEdit.setError(registerFormState.getRePasswordString());
                 }
             }
         }
@@ -94,23 +91,24 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                registerViewModel.registerDataChanged(registerEmail.getText().toString(),registerName.getText().toString()
-                ,registerPassword.getText().toString(),rePassward.getText().toString());
+                registerViewModel.registerDataChanged(mEmailEdit.getText().toString(), mNicknameEdit.getText().toString()
+                , mPasswordEdit.getText().toString(), mRePasswardEdit.getText().toString());
             }
         };
 
-        registerEmail.addTextChangedListener(registerTextWatcher);
-        registerName.addTextChangedListener(registerTextWatcher);
-        registerPassword.addTextChangedListener(registerTextWatcher);
-        rePassward.addTextChangedListener(registerTextWatcher);
+        mEmailEdit.addTextChangedListener(registerTextWatcher);
+        mNicknameEdit.addTextChangedListener(registerTextWatcher);
+        mPasswordEdit.addTextChangedListener(registerTextWatcher);
+        mRePasswardEdit.addTextChangedListener(registerTextWatcher);
 
         registerButton.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
                 new RegisterTask().execute(
-                        registerEmail.getText().toString(),
-                        registerName.getText().toString(),
-                        registerPassword.getText().toString());
+                        mEmailEdit.getText().toString(),
+                        mNicknameEdit.getText().toString(),
+                        mUsernameEdit.getText().toString(),
+                        mPasswordEdit.getText().toString());
             }
         });
     }
@@ -130,14 +128,17 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected Result<Boolean> doInBackground(String... params) {
             String email = params[0];
-            String username = params[1];
-            String password = params[2];
+            String nickname = params[1];
+            String username = params[2];
+            String password = params[3];
             try {
                 OkHttpClient client = new OkHttpClient();
                 FormBody formBody = new FormBody
                         .Builder()
                         .add("ID", username)
                         .add("password", password)
+                        .add("nickname", nickname)
+                        .add("email", email)
                         .build();
                 Request request = new Request.Builder()
                         .url(Global.url_prefix + "/user/register")
@@ -166,7 +167,7 @@ public class RegisterActivity extends AppCompatActivity {
             registeringProcessBar.setVisibility(View.INVISIBLE);
             if (result instanceof Result.Success) {
                 Boolean data = ((Result.Success<Boolean>) result).getData();
-                Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "注册成功！", Toast.LENGTH_LONG).show();
                 finish();
             } else {
                 Toast.makeText(getApplicationContext(), ((Result.Error) result).toString(), Toast.LENGTH_SHORT).show();
