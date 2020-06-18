@@ -37,11 +37,7 @@ public class LoginDataSource {
             Response response = call.execute();
             if (response.isSuccessful()) {
                 JSONObject res = new JSONObject(response.body().string());
-                String token = res.get("token").toString();
-                LoggedInUser user = new LoggedInUser(
-                        username,
-                        "张三",
-                        token);
+                LoggedInUser user = new LoggedInUser(res);
                 return new Result.Success<>(user);
             }
             return new Result.Error(new IOException("Login Error"));
