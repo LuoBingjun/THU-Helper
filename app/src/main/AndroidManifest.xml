@@ -3,6 +3,7 @@
     package="com.example.thu_helper">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -12,9 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.setting.SettingActivity"></activity>
         <activity
             android:name=".ui.person.PersonActivity"
-            android:label="@string/title_activity_person"></activity>
+            android:label="@string/title_activity_person" />
         <activity
             android:name=".ui.detail.DetailActivity"
             android:label="@string/title_detail" />
