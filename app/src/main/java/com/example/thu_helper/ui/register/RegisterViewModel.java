@@ -20,7 +20,7 @@ public class RegisterViewModel extends ViewModel {
 
     public void registerDataChanged(String email,String name,String password,String rePassword) {
         if (!isEmailValid(email)) {
-            registerFormState.setValue(new RegisterFormState(R.string.prompt_email,null, null,null));
+            registerFormState.setValue(new RegisterFormState(R.string.prompt_username,null, null,null));
         }
         else if(!isNameValid(name)){
             registerFormState.setValue(new RegisterFormState(null,R.string.invalid_username,null,null));
