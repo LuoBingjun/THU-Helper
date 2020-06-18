@@ -21,9 +21,9 @@ public class LoginRepository {
         this.dataSource = dataSource;
     }
 
-    public static LoginRepository getInstance(LoginDataSource dataSource) {
+    public static LoginRepository getInstance() {
         if (instance == null) {
-            instance = new LoginRepository(dataSource);
+            instance = new LoginRepository(new LoginDataSource());
         }
         return instance;
     }
@@ -41,6 +41,10 @@ public class LoginRepository {
         this.user = user;
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
+    }
+
+    public LoggedInUser getUser(){
+        return user;
     }
 
     public Result<LoggedInUser> login(String username, String password) {

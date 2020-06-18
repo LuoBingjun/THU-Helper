@@ -21,7 +21,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
-    LoginRepository loginRepository = LoginRepository.getInstance(new LoginDataSource());
+    LoginRepository loginRepository = LoginRepository.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
