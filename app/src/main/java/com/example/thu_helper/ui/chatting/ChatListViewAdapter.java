@@ -51,7 +51,7 @@ public class ChatListViewAdapter extends ArrayAdapter<ChatMsgEntity> {
         }
 
         switch (msg.getType()){
-            case ChatMsgEntity.MSG_ACCEPT:
+            case ChatMsgEntity.MSG_RECEIVED:
                 viewHolder.leftLayout.setVisibility(View.VISIBLE);
                 viewHolder.rightLayout.setVisibility(View.GONE);
                 viewHolder.username_left.setText(msg.getName());
