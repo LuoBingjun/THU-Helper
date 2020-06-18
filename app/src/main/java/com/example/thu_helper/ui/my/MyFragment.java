@@ -1,6 +1,7 @@
 package com.example.thu_helper.ui.my;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,8 +18,11 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.thu_helper.MainActivity;
 import com.example.thu_helper.R;
 import com.example.thu_helper.ui.detail.RecordDetail;
+import com.example.thu_helper.ui.login.LoginActivity;
+import com.example.thu_helper.ui.person.PersonActivity;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
@@ -58,6 +62,8 @@ public class MyFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "个人信息", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), PersonActivity.class);
+                startActivity(intent);
             }
         };
 
