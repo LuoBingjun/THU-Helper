@@ -3,7 +3,7 @@ package com.example.thu_helper.ui.chatting;
 public class ChatMsgEntity
 {
     final static int MSG_SEND = 0;
-    final static int MSG_ACCEPT = 1;
+    final static int MSG_RECEIVED = 1;
     private String name;
     private String date;
     private String text;
