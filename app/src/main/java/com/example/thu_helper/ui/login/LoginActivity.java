@@ -24,8 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.thu_helper.R;
-import com.example.thu_helper.ui.login.LoginViewModel;
-import com.example.thu_helper.ui.login.LoginViewModelFactory;
 import com.example.thu_helper.ui.register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -132,7 +130,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 
