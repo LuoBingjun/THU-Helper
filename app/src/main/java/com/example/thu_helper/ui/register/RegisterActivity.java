@@ -22,10 +22,12 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.thu_helper.R;
 import com.example.thu_helper.data.Result;
+import com.example.thu_helper.utils.Global;
 
 import java.io.IOException;
 
 import okhttp3.Call;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -105,7 +107,8 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
-                new RegisterTask().execute(registerEmail.getText().toString(),
+                new RegisterTask().execute(
+                        registerEmail.getText().toString(),
                         registerName.getText().toString(),
                         registerPassword.getText().toString());
             }
@@ -131,11 +134,16 @@ public class RegisterActivity extends AppCompatActivity {
             String password = params[2];
             try {
                 OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder()
-                        .url("https://www.baidu.com")
+                FormBody formBody = new FormBody
+                        .Builder()
+                        .add("ID", username)
+                        .add("password", password)
                         .build();
-                Call call = client.newCall(request);
-                Response response = call.execute();
+                Request request = new Request.Builder()
+                        .url(Global.url_prefix + "/user/register")
+                        .post(formBody)
+                        .build();
+                Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
                     return new Result.Success<>(true);
                 }
@@ -158,7 +166,7 @@ public class RegisterActivity extends AppCompatActivity {
             registeringProcessBar.setVisibility(View.INVISIBLE);
             if (result instanceof Result.Success) {
                 Boolean data = ((Result.Success<Boolean>) result).getData();
-                Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG).show();
                 finish();
             } else {
                 Toast.makeText(getApplicationContext(), ((Result.Error) result).toString(), Toast.LENGTH_SHORT).show();
