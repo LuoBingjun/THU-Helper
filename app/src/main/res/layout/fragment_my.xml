@@ -1,54 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.my.MyFragment">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data >
+        <variable name="loggedInUser" type="com.example.thu_helper.data.model.LoggedInUser" />
+    </data>
 
-    <RelativeLayout
-        android:id="@+id/top_bar"
-        app:layout_constraintTop_toTopOf="parent"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        tools:context=".ui.my.MyFragment">
 
-        <View
-            android:id="@+id/h_back"
+        <RelativeLayout
+            android:id="@+id/top_bar"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="@mipmap/my_background" />
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/h_head"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_centerInParent="true" />
+            <View
+                android:id="@+id/h_back"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@mipmap/my_background" />
 
-        <TextView
-            android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/h_head"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/h_back"
+                android:layout_marginBottom="20dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:text="@{loggedInUser.nickname}" />
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/h_back"
-            android:layout_marginBottom="20dp"
-            android:layout_centerHorizontal="true"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:text="张三" />
+            android:background="@color/qmui_config_color_background"
+            android:fitsSystemWindows="true"
+            app:layout_constraintTop_toBottomOf="@+id/top_bar">
 
-    </RelativeLayout>
+            <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
+                android:id="@+id/groupListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/qmui_config_color_background"
-        android:fitsSystemWindows="true"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar">
-
-        <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
-            android:id="@+id/groupListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </ScrollView>
+        </ScrollView>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+

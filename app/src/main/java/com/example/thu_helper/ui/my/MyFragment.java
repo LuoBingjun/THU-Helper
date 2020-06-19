@@ -11,12 +11,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.Observable;
+import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.thu_helper.BR;
 import com.example.thu_helper.R;
+import com.example.thu_helper.data.LoginRepository;
+import com.example.thu_helper.data.model.LoggedInUser;
 import com.example.thu_helper.ui.setting.SettingActivity;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
@@ -25,15 +31,20 @@ import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import butterknife.BindView;
 
 public class MyFragment extends Fragment {
-
+    ViewDataBinding binding;
     private MyViewModel myViewModel;
     private QMUIGroupListView mGroupListView;
+    private LoggedInUser loggedInUser;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         myViewModel =
                 ViewModelProviders.of(this).get(MyViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_my, container, false);
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_my,container,false);
+        loggedInUser = LoginRepository.getInstance().getUser();
+        binding.setVariable(BR.loggedInUser, loggedInUser);
+
+        View root = binding.getRoot();
         Context context = root.getContext();
         ImageView headImage = root.findViewById(R.id.h_head);
 

@@ -1,12 +1,17 @@
 package com.example.thu_helper.data.model;
 
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+
+import com.example.thu_helper.BR;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository
  */
-public class LoggedInUser {
+public class LoggedInUser extends BaseObservable {
     public String token;
     public String username;
     public String email;
@@ -31,7 +36,52 @@ public class LoggedInUser {
         this.phone = user.getString("phone");
     }
 
+    public void update(JSONObject res) throws JSONException {
+        this.username = res.getString("ID");
+        this.email = res.getString("email");
+        setNickname(res.getString("nickname"));
+        setAvater(res.getString("head_portrait"));
+        setPhone(res.getString("phone"));
+    }
+
+    public void setNickname(String nickname) {
+        if(!this.nickname.equals(nickname)){
+            this.nickname = nickname;
+            notifyPropertyChanged(BR.nickname);
+        }
+    }
+
+    public void setPhone(String phone) {
+        if(!this.phone.equals(phone)){
+            this.phone = phone;
+            notifyPropertyChanged(BR.phone);
+        }
+    }
+
+    public void setAvater(String avater) {
+        if (!this.avater.equals(avater)) {
+            this.avater = avater;
+            notifyPropertyChanged(BR.avater);
+        }
+    }
+
+    @Bindable
+    public String getUsername() {
+        return this.username;
+    }
+
+    @Bindable
     public String getNickname() {
-        return nickname;
+        return this.nickname;
+    }
+
+    @Bindable
+    public String getPhone() {
+        return this.phone;
+    }
+
+    @Bindable
+    public String getAvater() {
+        return this.avater;
     }
 }
