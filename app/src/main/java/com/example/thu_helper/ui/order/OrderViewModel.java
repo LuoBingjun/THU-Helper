@@ -13,7 +13,7 @@ public class OrderViewModel extends ViewModel {
         mText = new MutableLiveData<>();
         mText.setValue("This is dashboard fragment");
         mOrder = new MutableLiveData<>();
-        mOrder.setValue(new OrderInputInfo("标题","06-27 17:37","06-27 17:38"
+        mOrder.setValue(new OrderInputInfo("标题","2019-06-27 17:37:00","2019-06-27 17:38:00"
                 ,"紫荆14号楼后小树林","最近不在学校帮忙取快递","5元"));
     }
 
@@ -21,6 +21,7 @@ public class OrderViewModel extends ViewModel {
         return mText;
     }
     public LiveData<OrderInputInfo> getOrder() { return mOrder; }
+    public void setOrder(OrderInputInfo order){ this.mOrder.setValue(order);}
 
     public void setTitle(String title){
         mOrder.getValue().setTitle(title);
