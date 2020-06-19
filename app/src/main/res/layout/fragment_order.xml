@@ -22,7 +22,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="550dp"
             android:layout_marginTop="5dp"
             android:background="@color/qmui_config_color_white">
 
@@ -34,15 +34,6 @@
 
         </ScrollView>
 
-        <EditText
-            android:minLines="5"
-            android:gravity="top"
-            android:text="1-300个字符"
-            android:textSize="15sp"
-            android:layout_marginTop="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            />
 
         <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
             android:id="@+id/sendBtn"
