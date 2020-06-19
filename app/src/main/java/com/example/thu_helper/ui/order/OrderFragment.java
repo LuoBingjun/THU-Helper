@@ -34,6 +34,9 @@ import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import okhttp3.FormBody;
@@ -48,6 +51,7 @@ public class OrderFragment extends Fragment {
     private QMUIGroupListView mGroupListView;
     private Button sendOrderBtn;
     private LoggedInUser loggedInUser;
+    private String time;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -111,7 +115,7 @@ public class OrderFragment extends Fragment {
             String location = strings[3];
             String myDetail = strings[4];
             String money = strings[5];
-            System.out.println(title);
+
             try {
                 OkHttpClient client = new OkHttpClient();
                 FormBody formBody = new FormBody
@@ -233,7 +237,7 @@ public class OrderFragment extends Fragment {
     }
 
     private void showTimeDialogPick(final QMUICommonListItemView itemView) {
-        final StringBuffer time = new StringBuffer();
+        //final String time = new String();
         //获取Calendar对象，用于获取当前时间
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -247,15 +251,23 @@ public class OrderFragment extends Fragment {
             //选择完时间后会调用该回调函数
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                time.append(" "  + hourOfDay + ":" + minute);
+                String hour = String.valueOf(hourOfDay);
+                String min = String.valueOf(minute);
+                if(hourOfDay < 10){
+                    hour = "0" + hour;
+                }
+                if(minute < 10){
+                    min = "0" + min;
+                }
+                time = String.format("%s %s:%s:%s",time,hour,min,"00");
                 //设置TextView显示最终选择的时间
                 itemView.setDetailText(time);
                 switch (itemView.getText().toString()){
                     case OrderInputInfo.BeginTime:
-                        orderViewModel.setBeginTime(time.toString());
+                        orderViewModel.setBeginTime(time);
                         break;
                     case OrderInputInfo.EndTime:
-                        orderViewModel.setEndTime(time.toString());
+                        orderViewModel.setEndTime(time);
                         break;
                 }
             }
@@ -266,7 +278,18 @@ public class OrderFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 //因为monthOfYear会比实际月份少一月所以这边要加1
-                time.append(year + "-" + (monthOfYear+1) + "-" + dayOfMonth);
+                String y = String.valueOf(year);
+                String mon = String.valueOf(monthOfYear);
+                String day = String.valueOf(dayOfMonth);
+
+                if(monthOfYear < 10){
+                    mon = "0" + mon;
+                }
+                if(dayOfMonth < 10){
+                    day = "0" + day;
+                }
+                time =String.format("%s-%s-%s",y,mon,day);
+
                 //选择完日期后弹出选择时间对话框
                 timePickerDialog.show();
             }
