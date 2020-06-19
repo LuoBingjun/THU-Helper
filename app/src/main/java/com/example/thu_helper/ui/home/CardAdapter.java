@@ -42,7 +42,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
 
     static class ViewHolder extends RecyclerView.ViewHolder{
-        int id;
         ImageView image;
         TextView title;
         TextView content;
@@ -69,11 +68,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Record record = data.get(position);
-        holder.id = record.id;
         holder.image.setBackgroundResource(R.drawable.ic_order_128dp);
         holder.title.setText(record.title);
         holder.content.setText(record.content);
-        holder.loc.setText(record.title);
+        holder.loc.setText("地点");
         holder.time.setText(new java.text.SimpleDateFormat("MM-dd hh:mm").format(record.time));
     }
 }
