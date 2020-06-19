@@ -1,5 +1,7 @@
 package com.example.thu_helper.ui.order;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -9,6 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,7 +24,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.thu_helper.R;
+import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.data.Result;
+import com.example.thu_helper.data.model.LoggedInUser;
 import com.example.thu_helper.utils.Global;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
@@ -27,6 +34,7 @@ import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -39,7 +47,7 @@ public class OrderFragment extends Fragment {
     private View mFakeStatusBar;
     private QMUIGroupListView mGroupListView;
     private Button sendOrderBtn;
-    private Button cancelOrderBtn;
+    private LoggedInUser loggedInUser;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -59,13 +67,14 @@ public class OrderFragment extends Fragment {
 
         mGroupListView = root.findViewById(R.id.groupListView);
         initGroupListView(root);
+        loggedInUser = LoginRepository.getInstance().getUser();
 
         sendOrderBtn = root.findViewById(R.id.sendBtn);
-        cancelOrderBtn = root.findViewById(R.id.cancelBtn);
 
         sendOrderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 new OrderTask().execute(
                         orderViewModel.getTitle(),
                         orderViewModel.getBeginTime(),
@@ -76,6 +85,8 @@ public class OrderFragment extends Fragment {
                 );
             }
         });
+
+
         return root;
     }
 
@@ -100,7 +111,7 @@ public class OrderFragment extends Fragment {
             String location = strings[3];
             String myDetail = strings[4];
             String money = strings[5];
-            //publisher_id缺失
+            System.out.println(title);
             try {
                 OkHttpClient client = new OkHttpClient();
                 FormBody formBody = new FormBody
@@ -112,16 +123,19 @@ public class OrderFragment extends Fragment {
                         .add("reward", money)
                         .build();
                 Request request = new Request.Builder()
-                        .url(Global.test_prefix + "/activity/publish")
+                        .url(Global.url_prefix + "/activity/publish")
+                        .addHeader("Authorization","Token " + loggedInUser.token)
                         .post(formBody)
                         .build();
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
                     return new Result.Success<>(true);
                 }
-                return new Result.Error(new IOException("Publish Order Error"));
+                System.out.println(response.body().string());
+                return new Result.Error(new IOException(response.body().string()));
             } catch (Exception e) {
-                return new Result.Error(new IOException("Error Publish", e));
+                System.out.println(e.getMessage());
+                return new Result.Error(new IOException("网络请求失败，请稍后再尝试发单", e));
             }
         }
 
@@ -153,12 +167,6 @@ public class OrderFragment extends Fragment {
 
 
     private void alertDialog(final QMUICommonListItemView itemView){
-        CharSequence title = itemView.getText();
-        final Context context = itemView.getContext();
-        final QMUIDialog.EditTextDialogBuilder builder = new QMUIDialog.EditTextDialogBuilder(context);
-        builder.setTitle(title.toString());
-
-        //builder.setInputType(InputType.TYPE_CLASS_DATETIME);
 
         final String type = itemView.getText().toString();
 
@@ -167,53 +175,54 @@ public class OrderFragment extends Fragment {
             case OrderInputInfo.Detail:
             case OrderInputInfo.Location:
             case OrderInputInfo.Money:
-                builder.setPlaceholder("在此输入内容...");
-                builder.setInputType(InputType.TYPE_CLASS_TEXT);
+                showStringDialog(itemView);
                 break;
 
             case OrderInputInfo.BeginTime:
             case OrderInputInfo.EndTime:
-                builder.setPlaceholder("06-17 14:24");
-                builder.setInputType(InputType.TYPE_CLASS_DATETIME);
+                showTimeDialogPick(itemView);
                 break;
         }
 
+    }
+
+    private void showStringDialog(final QMUICommonListItemView itemView){
+        final CharSequence titleType = itemView.getText();
+        final Context context = itemView.getContext();
+        final QMUIDialog.EditTextDialogBuilder builder = new QMUIDialog.EditTextDialogBuilder(context);
+        builder.setTitle(titleType.toString());
+        builder.setPlaceholder("在此输入内容...");
+        builder.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.addAction("取消", new QMUIDialogAction.ActionListener() {
             @Override
             public void onClick(QMUIDialog dialog, int index) {
                 dialog.dismiss();
             }
         });
-
         builder.addAction("确定", new QMUIDialogAction.ActionListener() {
             @Override
             public void onClick(QMUIDialog dialog, int index) {
                 CharSequence text = builder.getEditText().getText();
                 if(text.length() == 0) return;
-                itemView.setDetailText(text);
-                switch (type){
+                switch (titleType.toString()){
                     case OrderInputInfo.Title:
                         orderViewModel.setTitle(text.toString());
-                        break;
-
-                    case OrderInputInfo.BeginTime:
-                        orderViewModel.setBeginTime(text.toString());
-                        break;
-
-                    case OrderInputInfo.EndTime:
-                        orderViewModel.setEndTime(text.toString());
+                        itemView.setDetailText(text.toString());
                         break;
 
                     case OrderInputInfo.Location:
                         orderViewModel.setLocation(text.toString());
+                        itemView.setDetailText(text.toString());
                         break;
 
                     case OrderInputInfo.Money:
                         orderViewModel.setMoney(text.toString());
+                        itemView.setDetailText(text.toString());
                         break;
 
                     case OrderInputInfo.Detail:
                         orderViewModel.setMyDetail(text.toString());
+                        itemView.setDetailText(text.toString());
                         break;
                 }
 
@@ -222,6 +231,50 @@ public class OrderFragment extends Fragment {
         });
         builder.show();
     }
+
+    private void showTimeDialogPick(final QMUICommonListItemView itemView) {
+        final StringBuffer time = new StringBuffer();
+        //获取Calendar对象，用于获取当前时间
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        //实例化TimePickerDialog对象
+        final TimePickerDialog timePickerDialog;
+        timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+            //选择完时间后会调用该回调函数
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                time.append(" "  + hourOfDay + ":" + minute);
+                //设置TextView显示最终选择的时间
+                itemView.setDetailText(time);
+                switch (itemView.getText().toString()){
+                    case OrderInputInfo.BeginTime:
+                        orderViewModel.setBeginTime(time.toString());
+                        break;
+                    case OrderInputInfo.EndTime:
+                        orderViewModel.setEndTime(time.toString());
+                        break;
+                }
+            }
+        }, hour, minute, true);
+        //实例化DatePickerDialog对象
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+            //选择完日期后会调用该回调函数
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                //因为monthOfYear会比实际月份少一月所以这边要加1
+                time.append(year + "-" + (monthOfYear+1) + "-" + dayOfMonth);
+                //选择完日期后弹出选择时间对话框
+                timePickerDialog.show();
+            }
+        }, year, month, day);
+        //弹出选择日期对话框
+        datePickerDialog.show();
+    }
+
 
     private void initGroupListView(final View root){
 

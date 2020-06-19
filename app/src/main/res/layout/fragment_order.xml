@@ -22,7 +22,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="550dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:background="@color/qmui_config_color_white">
 
@@ -39,19 +39,12 @@
             android:id="@+id/sendBtn"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="250dp"
             android:layout_marginEnd="10dp"
             android:background="@color/btn_filled_blue_bg_normal"
             android:text="发送" />
 
-        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
-            android:id="@+id/cancelBtn"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:text="取消"
-            android:background="@color/btn_filled_blue_bg_normal" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

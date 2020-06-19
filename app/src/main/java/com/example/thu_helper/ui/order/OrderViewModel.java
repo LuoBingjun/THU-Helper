@@ -21,6 +21,7 @@ public class OrderViewModel extends ViewModel {
         return mText;
     }
     public LiveData<OrderInputInfo> getOrder() { return mOrder; }
+    public void setOrder(OrderInputInfo order){ this.mOrder.setValue(order);}
 
     public void setTitle(String title){
         mOrder.getValue().setTitle(title);
