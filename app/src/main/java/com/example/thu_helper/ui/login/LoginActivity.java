@@ -23,17 +23,24 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.thu_helper.MainActivity;
 import com.example.thu_helper.R;
+import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.ui.register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
-
+    private LoginRepository loginRepository;
     private LoginViewModel loginViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        loginRepository = LoginRepository.getInstance();
+        if (loginRepository.isLoggedIn()){
+            startMainActivity();
+        }
+
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
@@ -71,10 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess());
-                    setResult(Activity.RESULT_OK);
-
-                    //Complete and destroy login activity once successful
-                    finish();
+                    startMainActivity();
                 }
             }
         });
@@ -135,5 +139,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+
+    private void startMainActivity(){
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }
