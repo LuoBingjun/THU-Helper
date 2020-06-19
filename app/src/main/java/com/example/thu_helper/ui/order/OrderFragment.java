@@ -106,15 +106,13 @@ public class OrderFragment extends Fragment {
                 FormBody formBody = new FormBody
                         .Builder()
                         .add("title", title)
-                        .add("address",location)
                         .add("start_time", beginTime)
                         .add("end_time",endTime)
-                        .add("activity_info", myDetail)
+                        .add("activity_info", location + "\n" + myDetail)
                         .add("reward", money)
-                        .add("publisher_id","11111111")
                         .build();
                 Request request = new Request.Builder()
-                        .url(Global.url_prefix + "/activity/edit_activity_info")
+                        .url(Global.test_prefix + "/activity/publish")
                         .post(formBody)
                         .build();
                 Response response = client.newCall(request).execute();
@@ -270,7 +268,7 @@ public class OrderFragment extends Fragment {
 
         QMUIGroupListView.newSection(getContext())
                 .setTitle("订单")
-                .setDescription("自定义字段")
+
                 .addItemView(itemTitle,onClickListener)
                 .addItemView(itemBeginTime, onClickListener)
                 .addItemView(itemEndTime, onClickListener)
