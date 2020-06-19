@@ -252,16 +252,7 @@ public class OrderFragment extends Fragment {
                 if (v instanceof QMUICommonListItemView) {
                     CharSequence text = ((QMUICommonListItemView) v).getText();
                     alertDialog((QMUICommonListItemView) v);
-                    switch (text.toString()){
-                        case OrderInputInfo.Title:
-                        case OrderInputInfo.BeginTime:
-                        case OrderInputInfo.EndTime:
-                        case OrderInputInfo.Location:
-                        case OrderInputInfo.Detail:
-                        case OrderInputInfo.Money:
-                            Toast.makeText(getActivity(), text + " is Clicked", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
+                    Toast.makeText(getActivity(), text + " is Clicked", Toast.LENGTH_SHORT).show();
                 }
             }
         };//默认文字在左边   自定义加载框按钮
