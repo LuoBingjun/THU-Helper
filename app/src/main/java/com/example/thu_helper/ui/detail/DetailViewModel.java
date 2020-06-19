@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class DetailViewModel extends ViewModel {
-    private MutableLiveData<Integer> id;
+    private MutableLiveData<String> id;
     private MutableLiveData<RecordDetail> record;
 
     public DetailViewModel(){
@@ -13,7 +13,7 @@ public class DetailViewModel extends ViewModel {
         record = new MutableLiveData<>();
     }
 
-    public MutableLiveData<Integer> getId() {
+    public MutableLiveData<String> getId() {
         return id;
     }
 

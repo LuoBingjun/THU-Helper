@@ -23,10 +23,7 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         detailViewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
-        int id = getIntent().getIntExtra("id", 0);
-//        detailViewModel.getId().setValue(id);
-        RecordDetail record = new RecordDetail(id, "帮忙取快递" + id,
-                "紫荆14号楼后小树林", new Date(), "最近不在学校，求帮忙取快递" + id);
-        detailViewModel.getRecord().setValue(record);
+        String id = getIntent().getStringExtra("id");
+        detailViewModel.getId().setValue(id);
     }
 }
