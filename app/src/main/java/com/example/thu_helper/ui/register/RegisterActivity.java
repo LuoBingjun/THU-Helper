@@ -148,9 +148,9 @@ public class RegisterActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     return new Result.Success<>(true);
                 }
-                return new Result.Error(new IOException("Login Error"));
+                return new Result.Error(new Exception("注册失败，请检查填写信息后重试"));
             } catch (Exception e) {
-                return new Result.Error(new IOException("Error logging in", e));
+                return new Result.Error(new Exception("网络请求失败，请稍后再试", e));
             }
         }
 
@@ -166,11 +166,10 @@ public class RegisterActivity extends AppCompatActivity {
         protected void onPostExecute(Result<Boolean> result) {
             registeringProcessBar.setVisibility(View.INVISIBLE);
             if (result instanceof Result.Success) {
-                Boolean data = ((Result.Success<Boolean>) result).getData();
-                Toast.makeText(getApplicationContext(), "注册成功！", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "注册成功", Toast.LENGTH_LONG).show();
                 finish();
             } else {
-                Toast.makeText(getApplicationContext(), ((Result.Error) result).toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), ((Result.Error) result).getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         }
 
