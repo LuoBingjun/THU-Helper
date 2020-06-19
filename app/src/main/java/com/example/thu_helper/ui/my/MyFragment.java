@@ -48,7 +48,7 @@ public class MyFragment extends Fragment {
         Context context = root.getContext();
         ImageView headImage = root.findViewById(R.id.h_head);
 
-        Glide.with(context).load(R.drawable.head)
+        Glide.with(context).load(loggedInUser.avater)
                 .apply(RequestOptions.circleCropTransform())
                 .into(headImage);
 
