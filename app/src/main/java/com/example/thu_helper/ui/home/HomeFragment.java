@@ -15,6 +15,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
@@ -68,6 +69,12 @@ public class HomeFragment extends Fragment {
     private LiveData<String> mWord;
     private LiveData<String> mTime;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        new GetTask().execute(mWord.getValue(), mTime.getValue());
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         loggedInUser = LoginRepository.getInstance().getUser();
@@ -87,11 +94,13 @@ public class HomeFragment extends Fragment {
         ConstraintLayout.LayoutParams params=new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, statusHeight);
         mFakeStatusBar.setLayoutParams(params);
 
+        // Init Spinner
         mNiceSpinner = root.findViewById(R.id.nice_spinner);
         List<String> dataset = new ArrayList<>(Arrays.asList(resources.getStringArray(R.array.times)));
         mNiceSpinner.attachDataSource(dataset);
         mNiceSpinner.setOnSpinnerItemSelectedListener(onSpinnerSelected);
 
+        // Init SearchView
         mSearchView = root.findViewById(R.id.searchView);
         mSearchView.setOnQueryTextListener(onQueryTextListener);
 
@@ -116,8 +125,6 @@ public class HomeFragment extends Fragment {
                 new GetTask().execute(mWord.getValue(), s);
             }
         });
-
-        new GetTask().execute(mWord.getValue(), mTime.getValue());
 
         return root;
     }

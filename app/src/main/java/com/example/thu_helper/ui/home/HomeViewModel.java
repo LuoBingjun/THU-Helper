@@ -18,9 +18,10 @@ public class HomeViewModel extends ViewModel {
         this.mData = new ArrayList<>();
         this.mTime = new MutableLiveData<>();
         this.mWord = new MutableLiveData<>();
-        for (int i = 0; i < 10; i++){
-            mData.add(new Record("123", "清华帮帮忙" + i, "紫荆14号楼小树林", new Date(), "15元", "这里是详情第一段\n这里是详情第二段"));
-        }
+//        for (int i = 0; i < 10; i++){
+//            mData.add(new Record("123", "清华帮帮忙" + i, "紫荆14号楼小树林", new Date(), "15元", "这里是详情第一段\n这里是详情第二段"));
+//        }
+//        mData.add(new Record("5d971834b2fc11ea9973525400ea15a1", "清华帮帮忙", "紫荆14号楼小树林", new Date(), "15元", "这里是详情第一段\n这里是详情第二段"));
     }
 
     public void setTime(String str){
