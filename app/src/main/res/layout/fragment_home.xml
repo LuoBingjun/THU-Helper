@@ -13,23 +13,40 @@
         android:background="@color/colorPrimary"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <SearchView
-        android:id="@+id/searchView"
+
+    <LinearLayout
+        android:id="@+id/serach_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:iconifiedByDefault="false"
-        android:queryHint="请输入搜索内容"
-        app:layout_constraintTop_toBottomOf="@id/fake_status_bar" >
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/fake_status_bar">
 
-    </SearchView>
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="match_parent"
+            android:iconifiedByDefault="false"
+            android:queryHint="请输入搜索内容"
+            app:layout_constraintTop_toBottomOf="@id/fake_status_bar">
+
+        </SearchView>
+
+        <org.angmarch.views.NiceSpinner
+            android:id="@+id/nice_spinner"
+            android:layout_width="120dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:paddingTop="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchView" />
+        app:layout_constraintTop_toBottomOf="@+id/serach_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

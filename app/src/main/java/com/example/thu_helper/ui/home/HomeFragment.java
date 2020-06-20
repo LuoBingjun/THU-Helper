@@ -9,11 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.PopupWindow;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -25,7 +29,13 @@ import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.data.Result;
 import com.example.thu_helper.data.model.LoggedInUser;
 import com.example.thu_helper.utils.Global;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.widget.popup.QMUIPopup;
+import com.qmuiteam.qmui.widget.popup.QMUIPopups;
 
+import org.angmarch.views.NiceSpinner;
+import org.angmarch.views.OnSpinnerItemSelectedListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,8 +43,12 @@ import org.json.JSONObject;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -48,6 +62,11 @@ public class HomeFragment extends Fragment {
     private HomeViewModel homeViewModel;
     private View mFakeStatusBar;
     private CardAdapter cardAdapter;
+    private NiceSpinner mNiceSpinner;
+    private SearchView mSearchView;
+
+    private LiveData<String> mWord;
+    private LiveData<String> mTime;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -55,6 +74,9 @@ public class HomeFragment extends Fragment {
 
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
+        mWord = homeViewModel.getWord();
+        mTime = homeViewModel.getTime();
+
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         // Set height of fake_status_bar
@@ -65,6 +87,14 @@ public class HomeFragment extends Fragment {
         ConstraintLayout.LayoutParams params=new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, statusHeight);
         mFakeStatusBar.setLayoutParams(params);
 
+        mNiceSpinner = root.findViewById(R.id.nice_spinner);
+        List<String> dataset = new ArrayList<>(Arrays.asList(resources.getStringArray(R.array.times)));
+        mNiceSpinner.attachDataSource(dataset);
+        mNiceSpinner.setOnSpinnerItemSelectedListener(onSpinnerSelected);
+
+        mSearchView = root.findViewById(R.id.searchView);
+        mSearchView.setOnQueryTextListener(onQueryTextListener);
+
 
         // Init RecyclerView
         cardAdapter = new CardAdapter(homeViewModel.getData());
@@ -73,11 +103,48 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(cardAdapter);
 
-        new GetTask().execute();
+        mWord.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                new GetTask().execute(s, mTime.getValue());
+            }
+        });
+
+        mTime.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                new GetTask().execute(mWord.getValue(), s);
+            }
+        });
+
+        new GetTask().execute(mWord.getValue(), mTime.getValue());
+
         return root;
     }
 
-    private class GetTask extends AsyncTask<Void, Integer, Result<List<Record>>> {
+    private OnSpinnerItemSelectedListener onSpinnerSelected = new OnSpinnerItemSelectedListener() {
+        @Override
+        public void onItemSelected(NiceSpinner parent, View view, int position, long id) {
+            String item = (String) parent.getItemAtPosition(position);
+            homeViewModel.setTime(item);
+        }
+    };
+
+    private SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            homeViewModel.setWord(query);
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            homeViewModel.setWord(newText);
+            return false;
+        }
+    };
+
+    private class GetTask extends AsyncTask<String, Integer, Result<List<Record>>> {
 
         // 方法1：onPreExecute（）
         // 作用：执行 线程任务前的操作（UI线程）
@@ -90,11 +157,22 @@ public class HomeFragment extends Fragment {
         // 作用：接收输入参数、执行任务中的耗时操作、返回 线程任务执行的结果（子线程）
         // 此处通过计算从而模拟“加载进度”的情况
         @Override
-        protected Result<List<Record>> doInBackground(Void... params) {
+        protected Result<List<Record>> doInBackground(String... params) {
             try {
+                String paramWord = params[0];
+                String paramTime = params[1];
+
                 OkHttpClient client = new OkHttpClient();
+                HttpUrl.Builder urlBuilder =HttpUrl.parse(Global.url_prefix + "/activity/list")
+                        .newBuilder();
+                if(paramWord != null){
+                    urlBuilder.addQueryParameter("word", paramWord);
+                }
+                if(paramTime != null){
+                    urlBuilder.addQueryParameter("time", paramTime);
+                }
                 Request request = new Request.Builder()
-                        .url(Global.url_prefix + "/activity/list")
+                        .url(urlBuilder.build())
                         .addHeader("Authorization","Token " + loggedInUser.token)
                         .build();
                 Response response = client.newCall(request).execute();

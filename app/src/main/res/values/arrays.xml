@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="times">
+        <item>所有时间</item>
+        <item>三小时内</item>
+        <item>一天内</item>
+        <item>三天内</item>
+        <item>一周内</item>
+        <item>一月内</item>
+    </string-array>
+</resources>

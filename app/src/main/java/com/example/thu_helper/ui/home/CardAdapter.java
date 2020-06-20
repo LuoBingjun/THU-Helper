@@ -47,16 +47,18 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         TextView content;
         TextView loc;
         TextView time;
+        TextView reward;
         CardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.cardView = itemView.findViewById(R.id.cardView);
-            this.image = itemView.findViewById(R.id.image);
+//            this.image = itemView.findViewById(R.id.image);
             this.title = itemView.findViewById(R.id.title);
             this.content = itemView.findViewById(R.id.info);
             this.loc = itemView.findViewById(R.id.loc);
             this.time = itemView.findViewById(R.id.time);
+            this.reward = itemView.findViewById(R.id.reward);
         }
     }
 
@@ -68,10 +70,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Record record = data.get(position);
-        holder.image.setBackgroundResource(R.drawable.ic_order_128dp);
+//        holder.image.setBackgroundResource(R.drawable.ic_order_128dp);
         holder.title.setText(record.title);
         holder.content.setText(record.content);
-        holder.loc.setText("地点");
+        holder.loc.setText(record.loc);
+        holder.reward.setText(record.reward);
         holder.time.setText(new java.text.SimpleDateFormat("MM-dd hh:mm").format(record.time));
     }
 }
