@@ -36,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setTitle(R.string.title_login);
+
         loginRepository = LoginRepository.getInstance();
         if (loginRepository.isLoggedIn()){
             startMainActivity();
