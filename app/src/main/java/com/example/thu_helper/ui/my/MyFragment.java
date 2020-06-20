@@ -23,6 +23,7 @@ import com.example.thu_helper.BR;
 import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.data.model.LoggedInUser;
+import com.example.thu_helper.ui.list.ListActivity;
 import com.example.thu_helper.ui.setting.SettingActivity;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
@@ -35,6 +36,15 @@ public class MyFragment extends Fragment {
     private MyViewModel myViewModel;
     private QMUIGroupListView mGroupListView;
     private LoggedInUser loggedInUser;
+    private ImageView mImageView;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Glide.with(getContext()).load(loggedInUser.avater)
+                .apply(RequestOptions.circleCropTransform())
+                .into(mImageView);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -45,12 +55,7 @@ public class MyFragment extends Fragment {
         binding.setVariable(BR.loggedInUser, loggedInUser);
 
         View root = binding.getRoot();
-        Context context = root.getContext();
-        ImageView headImage = root.findViewById(R.id.h_head);
-
-        Glide.with(context).load(loggedInUser.avater)
-                .apply(RequestOptions.circleCropTransform())
-                .into(headImage);
+        mImageView = root.findViewById(R.id.h_head);
 
         mGroupListView = root.findViewById(R.id.groupListView);
         initGroupListView();
@@ -91,7 +96,10 @@ public class MyFragment extends Fragment {
         View.OnClickListener onClickListener1 = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "等待中订单", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), ListActivity.class);
+                intent.putExtra("type", 0);
+                startActivity(intent);
+//                Toast.makeText(getActivity(), "等待中订单", Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -105,7 +113,9 @@ public class MyFragment extends Fragment {
         View.OnClickListener onClickListener2 = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "进行中订单", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), ListActivity.class);
+                intent.putExtra("type", 1);
+                startActivity(intent);
             }
         };
 
@@ -119,7 +129,9 @@ public class MyFragment extends Fragment {
         View.OnClickListener onClickListener3 = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "历史订单", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), ListActivity.class);
+                intent.putExtra("type", 2);
+                startActivity(intent);
             }
         };
 
