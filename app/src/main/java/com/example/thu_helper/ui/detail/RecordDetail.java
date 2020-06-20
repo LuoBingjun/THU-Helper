@@ -21,15 +21,6 @@ public class RecordDetail {
     public Date end_time;
     public int state;
 
-//    public RecordDetail(String id, String title, String loc, Date time, String content) {
-//        this.id = id;
-//        this.title = title;
-//        this.content = content;
-//        this.loc = loc;
-//        this.time = time;
-//        this.state = 1;
-//    }
-
     public RecordDetail(JSONObject res) throws JSONException, ParseException {
         this.id = res.getString("ID");
         this.content = res.getString("activity_info");

@@ -191,30 +191,43 @@ public class DetailFragment extends Fragment {
                 itemState.setDetailText("已接单");
                 newSection.addItemView(itemState, null);
 
+
                 QMUICommonListItemView itemPublisherName = mGroupListView.createItemView("发单人");
                 itemPublisherName.setOrientation(QMUICommonListItemView.HORIZONTAL);
                 itemPublisherName.setDetailText(record.publisher_nickname);
-                newSection.addItemView(itemPublisherName, null);
+                View.OnClickListener onClickPublisher = null;
+                if(!loggedInUser.username.equals(record.publisher_id)){
+                    itemPublisherName.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+
+                    onClickPublisher = new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getActivity(), ChatActivity.class);
+                            intent.putExtra("other_id", record.publisher_id);
+                            startActivity(intent);
+                        }
+                    };
+                }
+                newSection.addItemView(itemPublisherName, onClickPublisher);
+
 
                 QMUICommonListItemView itemAcceptorName = mGroupListView.createItemView("接单人");
                 itemAcceptorName.setOrientation(QMUICommonListItemView.HORIZONTAL);
                 itemAcceptorName.setDetailText(record.acceptor_nickname);
-                newSection.addItemView(itemAcceptorName, null);
+                View.OnClickListener onClickAcceptor = null;
+                if(!loggedInUser.username.equals(record.acceptor_id)){
+                    itemAcceptorName.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
 
-
-                QMUICommonListItemView itemChat = mGroupListView.createItemView("在线交流");
-                itemChat.setOrientation(QMUICommonListItemView.HORIZONTAL);
-                itemChat.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-                View.OnClickListener onClickChat = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getActivity(), ChatActivity.class);
-                        intent.putExtra("publisher_id", record.publisher_id);
-                        intent.putExtra("acceptor_id", record.acceptor_id);
-                        startActivity(intent);
-                    }
-                };
-                newSection.addItemView(itemChat, onClickChat);
+                    onClickAcceptor = new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getActivity(), ChatActivity.class);
+                            intent.putExtra("other_id", record.acceptor_id);
+                            startActivity(intent);
+                        }
+                    };
+                }
+                newSection.addItemView(itemAcceptorName, onClickAcceptor);
 
                 if (loggedInUser.username.equals(record.publisher_id)){
                     QMUICommonListItemView itemFinish = mGroupListView.createItemView("完成订单");
@@ -448,7 +461,7 @@ public class DetailFragment extends Fragment {
             try {
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder()
-                        .url(Global.url_prefix + "/activity/accept?ID=" + mViewModel.getId().getValue())
+                        .url(Global.url_prefix + "/activity/accept?ID=" + mViewModel.getId().getValue() + "&accept")
                         .addHeader("Authorization","Token " + loggedInUser.token)
                         .build();
                 Response response = client.newCall(request).execute();
