@@ -75,6 +75,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         holder.content.setText(record.content);
         holder.loc.setText(record.loc);
         holder.reward.setText(record.reward);
-        holder.time.setText(new java.text.SimpleDateFormat("MM-dd hh:mm").format(record.time));
+        holder.time.setText(record.formatTime());
     }
 }
