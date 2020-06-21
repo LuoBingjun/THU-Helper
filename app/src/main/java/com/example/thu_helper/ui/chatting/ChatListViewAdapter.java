@@ -19,6 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.data.Result;
@@ -92,8 +94,12 @@ public class ChatListViewAdapter extends ArrayAdapter<ChatMsgEntity> {
                 viewHolder.username_left.setText(msg.getName());
                 viewHolder.sendTime_left.setText(msg.getDate());
                 viewHolder.msg_left.setText(msg.getText());
-                if(head_portrait_left_name != null && !head_portrait_left_name.equals("null"))
-                    new DownloadImageLeftTask().execute(Global.url_prefix + "/static/images/"+head_portrait_left_name);
+                if(head_portrait_left_name != null && !head_portrait_left_name.equals("null")){
+                    Glide.with(getContext()).load(loggedInUser.avater)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(viewHolder.userhead_left);
+                }
+//                    new DownloadImageLeftTask().execute(Global.url_prefix + "/static/images/"+head_portrait_left_name);
                 break;
             case ChatMsgEntity.MSG_SEND:
                 viewHolder.leftLayout.setVisibility(View.GONE);
@@ -101,8 +107,12 @@ public class ChatListViewAdapter extends ArrayAdapter<ChatMsgEntity> {
                 viewHolder.username_right.setText(msg.getName());
                 viewHolder.sendTime_right.setText(msg.getDate());
                 viewHolder.msg_right.setText(msg.getText());
-                if(head_portrait_right_name != null && !head_portrait_right_name.equals("null"))
-                    new DownloadImageRightTask().execute(Global.url_prefix + "/static/images/"+head_portrait_right_name);
+                if(head_portrait_right_name != null && !head_portrait_right_name.equals("null")){
+                    Glide.with(getContext()).load(Global.url_prefix + "/static/images/"+head_portrait_right_name)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(viewHolder.userhead_right);
+                }
+//                    new DownloadImageRightTask().execute(Global.url_prefix + "/static/images/"+head_portrait_right_name);
                 break;
         }
 
