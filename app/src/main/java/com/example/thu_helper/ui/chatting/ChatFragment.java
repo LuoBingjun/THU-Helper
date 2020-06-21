@@ -11,12 +11,14 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Looper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.example.thu_helper.R;
@@ -84,6 +86,7 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
     private Marker mOtherMarker = null;
     private Marker mMyMarker = null;
     private boolean dragged = false;
+    private boolean collapsed = false;
 
     public static ChatFragment newInstance() { return new ChatFragment();}
 
@@ -138,6 +141,25 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
         new ChatTask().execute();
 
         mFrameLayout = root.findViewById(R.id.frameLayout);
+        Button mCollapseButton = root.findViewById(R.id.collapseButton);
+        mCollapseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (collapsed){
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0);
+                    mFrameLayout.setLayoutParams(layoutParams);
+                    mCollapseButton.setText("展开位置共享");
+                    collapsed = false;
+                }
+                else {
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1);
+                    mFrameLayout.setLayoutParams(layoutParams);
+                    mCollapseButton.setText("折叠位置共享");
+                    collapsed = true;
+                }
+
+            }
+        });
         initLocation();
         return root;
     }
