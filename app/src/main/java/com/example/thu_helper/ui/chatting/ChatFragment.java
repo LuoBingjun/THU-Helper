@@ -416,7 +416,7 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
                         res = new JSONArray(response.body().string());
                         for (int i = 0; i < res.length(); i++) {
                             JSONObject result = res.getJSONObject(i);
-                            if (result.get("type").equals("message")) {
+                            if (result.get("type").equals("message") && result.get("sender").equals(other_id)) {
                                 Date date = new Date();
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
                                 String sender = (String) result.get("sender");
