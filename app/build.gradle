@@ -25,6 +25,11 @@ android {
         enabled = true
     }
 
+    compileOptions{
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 }
 
 dependencies {
@@ -58,4 +63,6 @@ dependencies {
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.tencent.map:tencent-map-vector-sdk:4.3.4'
+    implementation "org.java-websocket:Java-WebSocket:1.4.0"
+    implementation 'io.crossbar.autobahn:autobahn-android:20.2.1'
 }

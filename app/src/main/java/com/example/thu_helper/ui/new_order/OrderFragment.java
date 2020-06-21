@@ -3,6 +3,7 @@ package com.example.thu_helper.ui.new_order;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.data.Result;
 import com.example.thu_helper.data.model.LoggedInUser;
+import com.example.thu_helper.ui.chatting.ChatActivity;
 import com.example.thu_helper.ui.detail.DetailFragment;
 import com.example.thu_helper.utils.Global;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
@@ -75,6 +77,7 @@ public class OrderFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 sendOrder();
+
             }
         });
 
