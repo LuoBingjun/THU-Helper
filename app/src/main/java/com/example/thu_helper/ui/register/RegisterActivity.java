@@ -20,8 +20,6 @@ import com.example.thu_helper.R;
 import com.example.thu_helper.data.Result;
 import com.example.thu_helper.utils.Global;
 
-import java.io.IOException;
-
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -41,7 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_register);
+        setContentView(R.layout.activity_register);
 
         registerViewModel = ViewModelProviders.of(this, new RegisterViewModelFactory())
                 .get(RegisterViewModel.class);

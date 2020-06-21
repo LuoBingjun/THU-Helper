@@ -10,37 +10,101 @@
     android:paddingRight="16dp"
     android:paddingBottom="16dp">
 
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:text="清华帮帮忙"
+        android:textColor="@color/colorPrimary"
+        android:textSize="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="邮箱"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="@+id/emailEdit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/emailEdit" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="昵称"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="@+id/nicknameEdit"
+        app:layout_constraintEnd_toEndOf="@+id/textView4"
+        app:layout_constraintStart_toStartOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="@+id/nicknameEdit" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="用户名"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="@+id/usernameEdit"
+        app:layout_constraintEnd_toEndOf="@+id/textView6"
+        app:layout_constraintStart_toStartOf="@+id/textView6"
+        app:layout_constraintTop_toTopOf="@+id/usernameEdit" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="密码"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="@+id/passwordEdit"
+        app:layout_constraintEnd_toEndOf="@+id/textView7"
+        app:layout_constraintStart_toStartOf="@+id/textView7"
+        app:layout_constraintTop_toTopOf="@+id/passwordEdit" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="确认密码"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="@+id/repasswordEdit"
+        app:layout_constraintEnd_toEndOf="@+id/textView8"
+        app:layout_constraintStart_toStartOf="@+id/textView8"
+        app:layout_constraintTop_toTopOf="@+id/repasswordEdit" />
+
     <EditText
         android:id="@+id/emailEdit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="96dp"
+
+
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="24dp"
-
-
-        android:hint="邮箱"
-        android:inputType="textEmailAddress"
         android:imeOptions="actionDone"
+        android:inputType="textEmailAddress"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
     <EditText
         android:id="@+id/nicknameEdit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
 
-        android:hint="昵称"
+        android:layout_marginEnd="24dp"
         android:imeOptions="actionDone"
         android:inputType="text"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/emailEdit"
         app:layout_constraintTop_toBottomOf="@id/emailEdit" />
 
 
@@ -48,69 +112,59 @@
         android:id="@+id/usernameEdit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
 
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        android:hint="用户名"
         android:imeOptions="actionDone"
         android:inputType="text"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/nicknameEdit"
         app:layout_constraintTop_toBottomOf="@+id/nicknameEdit" />
 
     <EditText
         android:id="@+id/passwordEdit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
 
-        android:hint="密码"
         android:imeActionLabel="注册"
         android:imeOptions="actionDone"
         android:inputType="textPassword"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/usernameEdit"
         app:layout_constraintTop_toBottomOf="@id/usernameEdit" />
 
     <EditText
         android:id="@+id/repasswordEdit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
 
-        android:hint="确认密码"
         android:imeActionLabel="再次确认密码"
         android:imeOptions="actionDone"
         android:inputType="textPassword"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/passwordEdit"
         app:layout_constraintTop_toBottomOf="@id/passwordEdit" />
 
     <Button
         android:id="@+id/registerButton"
-        android:layout_width="wrap_content"
+        android:layout_width="96dp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="48dp"
-        android:layout_marginBottom="64dp"
+        android:layout_marginTop="32dp"
         android:enabled="false"
         android:text="注册"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/repasswordEdit"
-        app:layout_constraintVertical_bias="0.2"
-        />
+        app:layout_constraintVertical_bias="0.2" />
     <ProgressBar
         android:id="@+id/registering"
         android:layout_width="wrap_content"
