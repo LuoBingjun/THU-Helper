@@ -1,4 +1,4 @@
-package com.example.thu_helper.ui.order;
+package com.example.thu_helper.ui.new_order;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -12,32 +12,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.data.Result;
 import com.example.thu_helper.data.model.LoggedInUser;
+import com.example.thu_helper.ui.detail.DetailFragment;
 import com.example.thu_helper.utils.Global;
+import com.qmuiteam.qmui.skin.QMUISkinManager;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -47,11 +49,13 @@ import okhttp3.Response;
 public class OrderFragment extends Fragment {
 
     private OrderViewModel orderViewModel;
-    private View mFakeStatusBar;
     private QMUIGroupListView mGroupListView;
     private Button sendOrderBtn;
     private LoggedInUser loggedInUser;
-    private String time;
+
+    public static OrderFragment newInstance() {
+        return new OrderFragment();
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -60,14 +64,6 @@ public class OrderFragment extends Fragment {
         orderViewModel =
                 ViewModelProviders.of(this).get(OrderViewModel.class);
         final View root = inflater.inflate(R.layout.fragment_order, container, false);
-
-        // Set height of fake_status_bar
-        mFakeStatusBar = root.findViewById(R.id.fake_status_bar);
-        Resources resources = getContext().getResources();
-        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
-        int statusHeight = resources.getDimensionPixelSize(resourceId);
-        ConstraintLayout.LayoutParams params=new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, statusHeight);
-        mFakeStatusBar.setLayoutParams(params);
 
         mGroupListView = root.findViewById(R.id.groupListView);
         initGroupListView(root);
@@ -78,20 +74,40 @@ public class OrderFragment extends Fragment {
         sendOrderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                new OrderTask().execute(
-                        orderViewModel.getTitle(),
-                        orderViewModel.getBeginTime(),
-                        orderViewModel.getEndTime(),
-                        orderViewModel.getLocation(),
-                        orderViewModel.getMyDetail(),
-                        orderViewModel.getMoney()
-                );
+                sendOrder();
             }
         });
 
 
         return root;
+    }
+
+    private void sendOrder() {
+        new QMUIDialog.MessageDialogBuilder(getActivity())
+                .setTitle("发布订单")
+                .setMessage("确定要发布新订单吗？")
+                .setSkinManager(QMUISkinManager.defaultInstance(getContext()))
+                .addAction("取消", new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        dialog.dismiss();
+                    }
+                })
+                .addAction(0, "确定", QMUIDialogAction.ACTION_PROP_POSITIVE, new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        new OrderTask().execute(
+                                orderViewModel.getTitle(),
+                                orderViewModel.getBeginTime(),
+                                orderViewModel.getEndTime(),
+                                orderViewModel.getLocation(),
+                                orderViewModel.getMyDetail(),
+                                orderViewModel.getMoney()
+                        );
+                        dialog.dismiss();
+                    }
+                })
+                .create(com.qmuiteam.qmui.R.style.QMUI_Dialog).show();
     }
 
     private class OrderTask extends AsyncTask<String, Integer, Result<Boolean>> {
@@ -122,8 +138,9 @@ public class OrderFragment extends Fragment {
                         .Builder()
                         .add("title", title)
                         .add("start_time", beginTime)
-                        .add("end_time",endTime)
-                        .add("activity_info", location + "\n" + myDetail)
+                        .add("end_time", endTime)
+                        .add("location", location)
+                        .add("activity_info", myDetail)
                         .add("reward", money)
                         .build();
                 Request request = new Request.Builder()
@@ -135,11 +152,10 @@ public class OrderFragment extends Fragment {
                 if (response.isSuccessful()) {
                     return new Result.Success<>(true);
                 }
-                System.out.println(response.body().string());
-                return new Result.Error(new IOException(response.body().string()));
+                return new Result.Error(new Exception("发布失败，请检查填写信息后重试"));
             } catch (Exception e) {
                 System.out.println(e.getMessage());
-                return new Result.Error(new IOException("网络请求失败，请稍后再尝试发单", e));
+                return new Result.Error(new Exception("网络请求失败，请稍后再试", e));
             }
         }
 
@@ -154,10 +170,10 @@ public class OrderFragment extends Fragment {
         @Override
         protected void onPostExecute(Result<Boolean> result) {
             if (result instanceof Result.Success) {
-                Boolean data = ((Result.Success<Boolean>) result).getData();
-                Toast.makeText(getContext(), "发布成功！", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), "新订单发布成功", Toast.LENGTH_LONG).show();
+                getActivity().finish();
             } else {
-                Toast.makeText(getContext(), ((Result.Error) result).toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), ((Result.Error) result).getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -196,71 +212,103 @@ public class OrderFragment extends Fragment {
         final QMUIDialog.EditTextDialogBuilder builder = new QMUIDialog.EditTextDialogBuilder(context);
         builder.setTitle(titleType.toString());
         builder.setPlaceholder("在此输入内容...");
-        builder.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.addAction("取消", new QMUIDialogAction.ActionListener() {
             @Override
             public void onClick(QMUIDialog dialog, int index) {
                 dialog.dismiss();
             }
         });
-        builder.addAction("确定", new QMUIDialogAction.ActionListener() {
-            @Override
-            public void onClick(QMUIDialog dialog, int index) {
-                CharSequence text = builder.getEditText().getText();
-                if(text.length() == 0) return;
-                switch (titleType.toString()){
-                    case OrderInputInfo.Title:
+
+        switch (titleType.toString()){
+            case OrderInputInfo.Title:{
+                builder.setDefaultText(orderViewModel.getTitle());
+                builder.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.addAction("确定", new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        CharSequence text = builder.getEditText().getText();
                         orderViewModel.setTitle(text.toString());
                         itemView.setDetailText(text.toString());
-                        break;
+                        dialog.dismiss();
+                    }
+                });
+                break;
+            }
 
-                    case OrderInputInfo.Location:
+
+
+            case OrderInputInfo.Location:{
+                builder.setDefaultText(orderViewModel.getLocation());
+                builder.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.addAction("确定", new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        CharSequence text = builder.getEditText().getText();
                         orderViewModel.setLocation(text.toString());
                         itemView.setDetailText(text.toString());
-                        break;
+                        dialog.dismiss();
+                    }
+                });
+                break;
+            }
 
-                    case OrderInputInfo.Money:
+
+            case OrderInputInfo.Money:{
+                builder.setDefaultText(orderViewModel.getMoney());
+                builder.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.addAction("确定", new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        CharSequence text = builder.getEditText().getText();
                         orderViewModel.setMoney(text.toString());
                         itemView.setDetailText(text.toString());
-                        break;
+                        dialog.dismiss();
+                    }
+                });
+                break;
+            }
 
-                    case OrderInputInfo.Detail:
+            case OrderInputInfo.Detail:{
+                builder.setDefaultText(orderViewModel.getMyDetail());
+                builder.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                builder.addAction("确定", new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        CharSequence text = builder.getEditText().getText();
                         orderViewModel.setMyDetail(text.toString());
                         itemView.setDetailText(text.toString());
-                        break;
-                }
-
-                dialog.dismiss();
+                        dialog.dismiss();
+                    }
+                });
+                break;
             }
-        });
+        }
         builder.show();
     }
 
     private void showTimeDialogPick(final QMUICommonListItemView itemView) {
-        //final String time = new String();
-        //获取Calendar对象，用于获取当前时间
-        final Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        //实例化TimePickerDialog对象
-        final TimePickerDialog timePickerDialog;
-        timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+        Date nowDate;
+        try{
+            nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(itemView.getDetailText().toString());
+        }
+        catch(ParseException e){
+            nowDate = new Date();
+        }
+
+        nowDate.setSeconds(0);
+
+        final Calendar nowCalendar = Calendar.getInstance();
+        nowCalendar.setTime(nowDate);
+        final Date date = nowDate;
+
+        final TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
             //选择完时间后会调用该回调函数
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                String hour = String.valueOf(hourOfDay);
-                String min = String.valueOf(minute);
-                if(hourOfDay < 10){
-                    hour = "0" + hour;
-                }
-                if(minute < 10){
-                    min = "0" + min;
-                }
-                time = String.format("%s %s:%s:%s",time,hour,min,"00");
-                //设置TextView显示最终选择的时间
+                date.setHours(hourOfDay);
+                date.setMinutes(minute);
+
+                String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
                 itemView.setDetailText(time);
                 switch (itemView.getText().toString()){
                     case OrderInputInfo.BeginTime:
@@ -271,30 +319,22 @@ public class OrderFragment extends Fragment {
                         break;
                 }
             }
-        }, hour, minute, true);
-        //实例化DatePickerDialog对象
+        }, nowCalendar.get(Calendar.HOUR_OF_DAY), nowCalendar.get(Calendar.MINUTE), true);
+
+
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
             //选择完日期后会调用该回调函数
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                //因为monthOfYear会比实际月份少一月所以这边要加1
-                String y = String.valueOf(year);
-                String mon = String.valueOf(monthOfYear);
-                String day = String.valueOf(dayOfMonth);
+                Date _Date = new Date(year - 1900, monthOfYear, dayOfMonth);
+                date.setYear(year - 1900);
+                date.setMonth(monthOfYear);
+                date.setDate(dayOfMonth);
 
-                if(monthOfYear < 10){
-                    mon = "0" + mon;
-                }
-                if(dayOfMonth < 10){
-                    day = "0" + day;
-                }
-                time =String.format("%s-%s-%s",y,mon,day);
-
-                //选择完日期后弹出选择时间对话框
                 timePickerDialog.show();
             }
-        }, year, month, day);
-        //弹出选择日期对话框
+        }, nowCalendar.get(Calendar.YEAR), nowCalendar.get(Calendar.MONTH), nowCalendar.get(Calendar.DAY_OF_MONTH));
+
         datePickerDialog.show();
     }
 
@@ -302,24 +342,35 @@ public class OrderFragment extends Fragment {
     private void initGroupListView(final View root){
 
         QMUICommonListItemView itemTitle = mGroupListView.createItemView(OrderInputInfo.Title);
+        itemTitle.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         itemTitle.setDetailText(orderViewModel.getTitle());
 
         QMUICommonListItemView itemBeginTime = mGroupListView.createItemView(OrderInputInfo.BeginTime);
+        itemBeginTime.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         itemBeginTime.setDetailText(orderViewModel.getBeginTime());
 
         QMUICommonListItemView itemEndTime = mGroupListView.createItemView(OrderInputInfo.EndTime);
+        itemEndTime.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         itemEndTime.setDetailText(orderViewModel.getEndTime());
 
         QMUICommonListItemView itemLocation = mGroupListView.createItemView(OrderInputInfo.Location);
         itemLocation.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         itemLocation.setDetailText(orderViewModel.getLocation());
 
+        QMUICommonListItemView itemMoney = mGroupListView.createItemView(OrderInputInfo.Money);
+        itemMoney.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        itemMoney.setDetailText(orderViewModel.getMoney());
+
         QMUICommonListItemView itemDetail = mGroupListView.createItemView(OrderInputInfo.Detail);
         itemDetail.setOrientation(QMUICommonListItemView.VERTICAL);
+        itemDetail.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         itemDetail.setDetailText(orderViewModel.getMyDetail());
+        itemDetail.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        itemDetail.setMinHeight(QMUIResHelper.getAttrDimen(getContext(), R.attr.qmui_list_item_height));
 
-        QMUICommonListItemView itemMoney = mGroupListView.createItemView(OrderInputInfo.Money);
-        itemMoney.setDetailText(orderViewModel.getMoney());
+        int paddingVer = QMUIDisplayHelper.dp2px(getContext(), 12);
+        itemDetail.setPadding(itemDetail.getPaddingLeft(), paddingVer,
+                itemDetail.getPaddingRight(), paddingVer);
 
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -334,15 +385,13 @@ public class OrderFragment extends Fragment {
         };//默认文字在左边   自定义加载框按钮
 
         QMUIGroupListView.newSection(getContext())
-                .setTitle("订单")
-
+                .setTitle("订单信息")
                 .addItemView(itemTitle,onClickListener)
+                .addItemView(itemMoney,onClickListener)
+                .addItemView(itemLocation, onClickListener)
                 .addItemView(itemBeginTime, onClickListener)
                 .addItemView(itemEndTime, onClickListener)
-                .addItemView(itemLocation, onClickListener)
                 .addItemView(itemDetail, onClickListener)
-                .addItemView(itemMoney,onClickListener)
                 .addTo(mGroupListView);
-
     }
 }

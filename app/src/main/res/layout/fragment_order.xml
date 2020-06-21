@@ -5,46 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/qmui_config_color_white"
-    tools:context=".ui.order.OrderFragment">
+    tools:context=".ui.new_order.OrderFragment">
 
-    <View
-        android:id="@+id/fake_status_bar"
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:background="@color/colorPrimary"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/fake_status_bar">
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/qmui_config_color_white">
 
-        <ScrollView
+        <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
+            android:id="@+id/groupListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:background="@color/qmui_config_color_white">
+            />
 
-            <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
-                android:id="@+id/groupListView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
+    </ScrollView>
 
-        </ScrollView>
-
-
-        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
-            android:id="@+id/sendBtn"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="250dp"
-            android:layout_marginEnd="10dp"
-            android:background="@color/btn_filled_blue_bg_normal"
-            android:text="发送" />
-
-
-    </LinearLayout>
+    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+        android:id="@+id/sendBtn"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="40dp"
+        android:clickable="true"
+        android:text="发布"
+        android:textColor="@color/white"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/scrollView"
+        app:qmui_backgroundColor="@color/colorAccent"
+        app:qmui_borderColor="@color/colorAccent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

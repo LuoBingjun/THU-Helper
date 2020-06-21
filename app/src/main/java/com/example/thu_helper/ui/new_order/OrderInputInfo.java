@@ -1,4 +1,4 @@
-package com.example.thu_helper.ui.order;
+package com.example.thu_helper.ui.new_order;
 
 public class OrderInputInfo {
     final static public String Title = "标题";
@@ -6,7 +6,7 @@ public class OrderInputInfo {
     final static public String EndTime = "结束时间";
     final static public String Location = "地点";
     final static public String Detail = "详情";
-    final static public String Money = "赏金";
+    final static public String Money = "报酬";
 
     private String title;
     private String beginTime;

@@ -1,4 +1,4 @@
-package com.example.thu_helper.ui.order;
+package com.example.thu_helper.ui.new_order;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -13,8 +13,8 @@ public class OrderViewModel extends ViewModel {
         mText = new MutableLiveData<>();
         mText.setValue("This is dashboard fragment");
         mOrder = new MutableLiveData<>();
-        mOrder.setValue(new OrderInputInfo("标题","2019-06-27 17:37:00","2019-06-27 17:38:00"
-                ,"紫荆14号楼后小树林","最近不在学校帮忙取快递","5元"));
+        mOrder.setValue(new OrderInputInfo("","",""
+                ,"","",""));
     }
 
     public LiveData<String> getText() {
