@@ -20,6 +20,7 @@ public class Record {
     public String content;
     public String loc;
     public String reward;
+    public int state;
     public Date time;
 
     public Record(String id, String title, String loc, Date time, String reward, String content) {
@@ -38,6 +39,7 @@ public class Record {
         this.loc = object.getString("location");
         this.time =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(object.getString("start_time"));
         this.reward = object.getString("reward");
+        this.state = object.getInt("state");
     }
 
     public String formatTime() {
