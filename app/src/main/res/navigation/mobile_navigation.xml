@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.thu_helper.ui.order.OrderFragment"
-        android:label="@string/title_order"
-        tools:layout="@layout/fragment_order" />
+        android:name="com.example.thu_helper.ui.process.ProcessFragment"
+        android:label="@string/title_process"
+        tools:layout="@layout/fragment_process" />
 
     <fragment
         android:id="@+id/navigation_notifications"
