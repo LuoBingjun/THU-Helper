@@ -95,7 +95,7 @@ public class ChatListViewAdapter extends ArrayAdapter<ChatMsgEntity> {
                 viewHolder.sendTime_left.setText(msg.getDate());
                 viewHolder.msg_left.setText(msg.getText());
                 if(head_portrait_left_name != null && !head_portrait_left_name.equals("null")){
-                    Glide.with(getContext()).load(loggedInUser.avater)
+                    Glide.with(getContext()).load(Global.url_prefix + "/static/images/"+head_portrait_left_name)
                             .apply(RequestOptions.circleCropTransform())
                             .into(viewHolder.userhead_left);
                 }
@@ -108,7 +108,7 @@ public class ChatListViewAdapter extends ArrayAdapter<ChatMsgEntity> {
                 viewHolder.sendTime_right.setText(msg.getDate());
                 viewHolder.msg_right.setText(msg.getText());
                 if(head_portrait_right_name != null && !head_portrait_right_name.equals("null")){
-                    Glide.with(getContext()).load(Global.url_prefix + "/static/images/"+head_portrait_right_name)
+                    Glide.with(getContext()).load(loggedInUser.avater)
                             .apply(RequestOptions.circleCropTransform())
                             .into(viewHolder.userhead_right);
                 }

@@ -74,7 +74,6 @@ public class MyFragment extends Fragment {
         View.OnClickListener onClickListener0 = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "个人信息", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), SettingActivity.class);
                 startActivity(intent);
             }
@@ -101,7 +100,6 @@ public class MyFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), ListActivity.class);
                 intent.putExtra("type", 0);
                 startActivity(intent);
-//                Toast.makeText(getActivity(), "等待中订单", Toast.LENGTH_SHORT).show();
             }
         };
 

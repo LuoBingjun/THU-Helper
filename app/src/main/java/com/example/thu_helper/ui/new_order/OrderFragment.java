@@ -382,7 +382,6 @@ public class OrderFragment extends Fragment {
                 if (v instanceof QMUICommonListItemView) {
                     CharSequence text = ((QMUICommonListItemView) v).getText();
                     alertDialog((QMUICommonListItemView) v);
-                    Toast.makeText(getActivity(), text + " is Clicked", Toast.LENGTH_SHORT).show();
                 }
             }
         };//默认文字在左边   自定义加载框按钮
