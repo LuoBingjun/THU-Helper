@@ -41,9 +41,11 @@ public class MyFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Glide.with(getContext()).load(loggedInUser.avater)
-                .apply(RequestOptions.circleCropTransform())
-                .into(mImageView);
+        if (loggedInUser.avater != null){
+            Glide.with(getContext()).load(loggedInUser.avater)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(mImageView);
+        }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
