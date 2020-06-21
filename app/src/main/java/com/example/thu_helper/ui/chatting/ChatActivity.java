@@ -30,7 +30,6 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toast.makeText(this,"Chatting", Toast.LENGTH_SHORT).show();
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_chat);
         String other_id = getIntent().getStringExtra("other_id");
@@ -66,7 +65,7 @@ public class ChatActivity extends AppCompatActivity {
         };
         if (Build.VERSION.SDK_INT >= 29 ? EasyPermissions.hasPermissions(this, permissionsForQ) :
                 EasyPermissions.hasPermissions(this, permissions)) {
-            Toast.makeText(this, "权限OK", Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "权限OK", Toast.LENGTH_LONG).show();
         } else {
             EasyPermissions.requestPermissions(this, "需要权限",
                     1, Build.VERSION.SDK_INT >= 29 ? permissionsForQ : permissions);
