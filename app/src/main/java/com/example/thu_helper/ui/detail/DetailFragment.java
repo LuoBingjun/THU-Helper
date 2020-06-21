@@ -188,46 +188,52 @@ public class DetailFragment extends Fragment {
             case 1:{
                 QMUICommonListItemView itemState = mGroupListView.createItemView("状态");
                 itemState.setOrientation(QMUICommonListItemView.HORIZONTAL);
-                itemState.setDetailText("已接单");
+                itemState.setDetailText("进行中");
                 newSection.addItemView(itemState, null);
 
+                QMUICommonListItemView itemIdentity = mGroupListView.createItemView("角色");
+                itemIdentity.setOrientation(QMUICommonListItemView.HORIZONTAL);
+                if (loggedInUser.username.equals(record.publisher_id)){
+                    itemIdentity.setDetailText("发单方");
+                    newSection.addItemView(itemIdentity, null);
+                }
+                else if (loggedInUser.username.equals(record.acceptor_id)){
+                    itemIdentity.setDetailText("接单方");
+                    newSection.addItemView(itemIdentity, null);
+                }
 
-                QMUICommonListItemView itemPublisherName = mGroupListView.createItemView("发单人");
-                itemPublisherName.setOrientation(QMUICommonListItemView.HORIZONTAL);
-                itemPublisherName.setDetailText(record.publisher_nickname);
-                View.OnClickListener onClickPublisher = null;
                 if(!loggedInUser.username.equals(record.publisher_id)){
+                    QMUICommonListItemView itemPublisherName = mGroupListView.createItemView("联系发单方");
+                    itemPublisherName.setOrientation(QMUICommonListItemView.HORIZONTAL);
+                    itemPublisherName.setDetailText(record.publisher_nickname);
                     itemPublisherName.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-
-                    onClickPublisher = new View.OnClickListener() {
+                    View.OnClickListener onClickPublisher = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(getActivity(), ChatActivity.class);
                             intent.putExtra("other_id", record.publisher_id);
-                            startActivity(intent);
+                            getActivity().startActivity(intent);
                         }
                     };
+                    newSection.addItemView(itemPublisherName, onClickPublisher);
                 }
-                newSection.addItemView(itemPublisherName, onClickPublisher);
 
-
-                QMUICommonListItemView itemAcceptorName = mGroupListView.createItemView("接单人");
-                itemAcceptorName.setOrientation(QMUICommonListItemView.HORIZONTAL);
-                itemAcceptorName.setDetailText(record.acceptor_nickname);
-                View.OnClickListener onClickAcceptor = null;
                 if(!loggedInUser.username.equals(record.acceptor_id)){
+                    QMUICommonListItemView itemAcceptorName = mGroupListView.createItemView("联系接单方");
+                    itemAcceptorName.setOrientation(QMUICommonListItemView.HORIZONTAL);
+                    itemAcceptorName.setDetailText(record.acceptor_nickname);
                     itemAcceptorName.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-
-                    onClickAcceptor = new View.OnClickListener() {
+                    View.OnClickListener onClickAcceptor = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(getActivity(), ChatActivity.class);
                             intent.putExtra("other_id", record.acceptor_id);
-                            startActivity(intent);
+                            getActivity().startActivity(intent);
                         }
                     };
+                    newSection.addItemView(itemAcceptorName, onClickAcceptor);
                 }
-                newSection.addItemView(itemAcceptorName, onClickAcceptor);
+
 
                 if (loggedInUser.username.equals(record.publisher_id)){
                     QMUICommonListItemView itemFinish = mGroupListView.createItemView("完成订单");
