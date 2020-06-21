@@ -37,12 +37,6 @@
                 android:layout_height="wrap_content"
                 android:text="作为接单方" >
 
-                <!--            <androidx.recyclerview.widget.RecyclerView-->
-                <!--                android:id="@+id/recycleViewAccept"-->
-                <!--                android:layout_width="match_parent"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:paddingTop="5dp" />-->
-
             </com.google.android.material.tabs.TabItem>
         </com.google.android.material.tabs.TabLayout>
 
