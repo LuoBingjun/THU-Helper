@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginRepository;
@@ -42,7 +41,7 @@ import com.tencent.tencentmap.mapsdk.maps.model.Marker;
 import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.maps.model.TencentMapGestureListener;
 
-import org.java_websocket.client.WebSocketClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,7 +50,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import io.crossbar.autobahn.websocket.WebSocketConnection;
 import io.crossbar.autobahn.websocket.WebSocketConnectionHandler;
 import io.crossbar.autobahn.websocket.exceptions.WebSocketException;
@@ -68,16 +66,16 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
     private ChatListViewAdapter mAdapter;
     private Button sendBtn;
     private EditText inputText;
-    private String name;
     private ChatViewModel mViewModel;
 
-    private String publisher_id;
+    private String user_id;
     private String other_id;
 
     private String message;
 
     private ChatWebSocketClient client;
     private LoggedInUser loggedInUser;
+    private ChatMsgEntity entity;
 
     private FrameLayout mFrameLayout;
     private TencentLocationManager mLocationManager;
@@ -96,13 +94,11 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
         // Inflate the layout for this fragment
         View root =  inflater.inflate(R.layout.fragment_chat, container, false);
         mViewModel = ViewModelProviders.of(getActivity()).get(ChatViewModel.class);
-        initMsg();
         mViewModel.getMessages().setValue(msgList);
         mAdapter = new ChatListViewAdapter(root.getContext(),R.layout.msg_item,mViewModel.getMessages().getValue());
         inputText = root.findViewById(R.id.input_text);
         sendBtn = root.findViewById(R.id.sendMsgBtn);
         mListView = root.findViewById(R.id.msg_list_view);
-        name = "张三";
         mListView.setAdapter(mAdapter);
 
         //test chat
@@ -115,7 +111,7 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
                 if(!content.equals("")){
                     Date date = new Date();
                     SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
-                    ChatMsgEntity msg = new ChatMsgEntity(name,dateFormat.format(date),content,ChatMsgEntity.MSG_SEND);
+                    ChatMsgEntity msg = new ChatMsgEntity(user_id,dateFormat.format(date),content,ChatMsgEntity.MSG_SEND);
                     msgList.add(msg);
                     mListView.setSelection(msgList.size());//将ListView定位到最后一行
                     inputText.setText("");
@@ -124,16 +120,15 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
                     try {
                         jsonMessage.put("other",other_id);
                         jsonMessage.put("msg",content);
+                        jsonMessage.put("type","message");
                         message = jsonMessage.toString();
                         sendMessage();
                     } catch (JSONException e) {
-                        System.out.println(e.getMessage());
                         e.printStackTrace();
                     } catch (InterruptedException e) {
                         System.out.println(e.getMessage());
                         e.printStackTrace();
                     }catch (Exception e){
-                        System.out.println(String.format("Exception class: %s, %s",e.getClass(),e.getMessage()));
                         e.printStackTrace();
                     }
                 }
@@ -148,11 +143,37 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
     }
 
     private void connect(){
-        client = new ChatWebSocketClient(URI.create(Global.ws_url));
+        client = new ChatWebSocketClient(URI.create(Global.ws_url)){
+            @Override
+            public void onMessage(String message) {
+                super.onMessage(message);
+                try {    //String转JSONObject
+                    JSONObject result = new JSONObject(message);
+                    if(result.get("type").equals("message")) {
+                        Date date = new Date();
+                        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+                        String sender = (String) result.get("sender");
+                        String receivedMsg = (String) result.get("msg");
+                        ChatMsgEntity msg = new ChatMsgEntity(sender,dateFormat.format(date),receivedMsg, ChatMsgEntity.MSG_RECEIVED);
+                        msgList.add(msg);
+                        mViewModel.getMessages().postValue(msgList);
+                        //mViewModel.setReceivedMsg(msg);
+                    }
+                    else if (result.get("type").equals("location")) {
+                        ChatViewModel.LocationData locationData = new ChatViewModel.LocationData(result);
+                        mViewModel.getOtherLocation().postValue(locationData);
+                    }
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
         try {
             client.connectBlocking();
             JSONObject jsonMessage =new JSONObject();
             jsonMessage.put("token",loggedInUser.token);
+            System.out.println(jsonMessage);
             client.send(jsonMessage.toString());
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -163,7 +184,6 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
     }
 
     private void sendMessage() throws InterruptedException {
-
         if(client != null) {
             if(client.isOpen()){
                 client.send(message);
@@ -172,14 +192,12 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
             else {
                 client.reconnectBlocking();
                 client.send(message);
-                System.out.println(String.format("client connectBlocking1: %s",client.isOpen()));
             }
         }
         else {
             client = new ChatWebSocketClient(URI.create(Global.ws_url));
             client.connectBlocking();
             client.send(message);
-            System.out.println(String.format("client connectBlocking2: %s",client.isOpen()));
         }
     }
 
@@ -196,29 +214,16 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
         MutableLiveData<List<ChatMsgEntity>> messages = mViewModel.getMessages();
         loggedInUser = LoginRepository.getInstance().getUser();
         other_id = getArguments().getString("other_id");
-        publisher_id = loggedInUser.username;
+        user_id = loggedInUser.username;
         connect();
 
         messages.observe(this,new Observer<List<ChatMsgEntity>>() {
             @Override
             public void onChanged(List<ChatMsgEntity> chatMsgEntities) {
                 mAdapter.notifyDataSetChanged();
+                mListView.setSelection(msgList.size());
             }
         });
-    }
-
-    private void initMsg(){
-        ChatMsgEntity msg1 = new ChatMsgEntity("张三","6-17 21:09","吃了吗？"
-                ,ChatMsgEntity.MSG_RECEIVED);
-        msgList.add(msg1);
-
-        ChatMsgEntity msg2 = new ChatMsgEntity("李四","6-17 21:11","还没，你呢？"
-                ,ChatMsgEntity.MSG_SEND);
-        msgList.add(msg2);
-
-        ChatMsgEntity msg3 = new ChatMsgEntity("张三","6-17 21:12","我吃了。"
-                ,ChatMsgEntity.MSG_RECEIVED);
-        msgList.add(msg3);
     }
 
     private void initLocation() {
@@ -289,11 +294,16 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
             }
         });
 
-        setOtherLocation(40.042893, 116.269673, "北京市");
+        mViewModel.getOtherLocation().observe(this, new Observer<ChatViewModel.LocationData>() {
+            @Override
+            public void onChanged(ChatViewModel.LocationData locationData) {
+                setOtherLocation(locationData.latitude, locationData.longitude, locationData.name);
+            }
+        });
     }
 
-    private void setMyLocation(double latitude, double longtitude, String name) {
-        LatLng position = new LatLng(latitude, longtitude);
+    private void setMyLocation(double latitude, double longitude, String name) {
+        LatLng position = new LatLng(latitude, longitude);
         if (mMyMarker == null){
             dragged = false;
             MarkerOptions options = new MarkerOptions(position)
@@ -316,8 +326,8 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
         }
     }
 
-    private void setOtherLocation(double latitude, double longtitude, String name){
-        LatLng position = new LatLng(latitude,longtitude);
+    private void setOtherLocation(double latitude, double longitude, String name){
+        LatLng position = new LatLng(latitude,longitude);
         if (mOtherMarker == null){
             dragged = false;
             MarkerOptions options = new MarkerOptions(position)
@@ -346,20 +356,19 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
 
     @Override
     public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
-        //其中 locationChangeListener 为 LocationSource.active 返回给用户的位置监听器
-        //用户通过这个监听器就可以设置地图的定位点位置
-//        if(i == TencentLocation.ERROR_OK && mLocationChangedListener != null){
-//            Location location = new Location(tencentLocation.getProvider());
-//            //设置经纬度
-//            location.setLatitude(tencentLocation.getLatitude());
-//            location.setLongitude(tencentLocation.getLongitude());
-//            //设置精度，这个值会被设置为定位点上表示精度的圆形半径
-//            location.setAccuracy(tencentLocation.getAccuracy());
-//            //设置定位标的旋转角度，注意 tencentLocation.getBearing() 只有在 gps 时才有可能获取
-//            location.setBearing((float) tencentLocation.getBearing());
-//            //将位置信息返回给地图
-//            mLocationChangedListener.onLocationChanged(location);
-//        }
+        JSONObject jsonMessage = new JSONObject();
+        try {
+            jsonMessage.put("longitude", tencentLocation.getLongitude());
+            jsonMessage.put("latitude", tencentLocation.getLatitude());
+            jsonMessage.put("name", tencentLocation.getName());
+            jsonMessage.put("other", other_id);
+            jsonMessage.put("type","location");
+            message = jsonMessage.toString();
+            sendMessage();
+        } catch (JSONException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
         setMyLocation(tencentLocation.getLatitude(), tencentLocation.getLongitude(), tencentLocation.getName());
     }
 
@@ -370,26 +379,40 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
 
 
     private class ChatTask extends AsyncTask<Void, Void, Result<Boolean>>{
-
-        @Override
-        protected Result<Boolean> doInBackground(Void... voids) {
-            try {
-                OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder()
-                        .url(Global.url_prefix + "/chat/off_msg")
-                        .addHeader("Authorization","Token " + loggedInUser.token)
-                        .build();
-                Response response = client.newCall(request).execute();
-                if (response.isSuccessful()) {
-                    //JSONObject res = new JSONObject(response.body().string());
-                    System.out.println(String.format("off_message: %s",response.body().string()));
-                    return new Result.Success<>(true);
+            @Override
+            protected Result<Boolean> doInBackground(Void... voids) {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder()
+                            .url(Global.url_prefix + "/chat/off_msg")
+                            .addHeader("Authorization", "Token " + loggedInUser.token)
+                            .build();
+                    Response response = null;
+                    response = client.newCall(request).execute();
+                    if (response.isSuccessful()) {
+                        JSONArray res = null;
+                        res = new JSONArray(response.body().string());
+                        for (int i = 0; i < res.length(); i++) {
+                            JSONObject result = res.getJSONObject(i);
+                            if (result.get("type").equals("message")) {
+                                Date date = new Date();
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+                                String sender = (String) result.get("sender");
+                                String receivedMsg = (String) result.get("msg");
+                                ChatMsgEntity msg = new ChatMsgEntity(sender, dateFormat.format(date), receivedMsg, ChatMsgEntity.MSG_RECEIVED);
+                                msgList.add(msg);
+                            }
+                            else if (result.get("type").equals("location")) {
+                                mViewModel.getOtherLocation().postValue(new ChatViewModel.LocationData(result));
+                            }
+                        }
+                        mViewModel.getMessages().postValue(msgList);
+                        return new Result.Success<>(true);
+                    }
+                    return new Result.Error(new Exception("请求失败，请联系网站管理员"));
+                } catch (Exception e) {
+                    return new Result.Error(new Exception("网络请求失败，请稍后重试", e));
                 }
-                return new Result.Error(new Exception("请求失败，请联系网站管理员"));
-            } catch (Exception e) {
-                System.out.println(String.format("Exception: %s, Class: %s",e.getMessage(),e.getClass()));
-                return new Result.Error(new Exception("网络请求失败，请稍后重试", e));
-            }
         }
     }
 }

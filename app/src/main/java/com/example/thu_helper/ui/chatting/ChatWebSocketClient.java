@@ -8,6 +8,8 @@ import org.java_websocket.handshake.ServerHandshake;
 import java.net.URI;
 
 public class ChatWebSocketClient extends WebSocketClient {
+
+
     public ChatWebSocketClient(URI serverUri) {
         super(serverUri);
     }
@@ -17,7 +19,6 @@ public class ChatWebSocketClient extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-        System.out.println(message);
     }
 
     @Override
@@ -34,4 +35,5 @@ public class ChatWebSocketClient extends WebSocketClient {
     public void send(String text) {
         super.send(text);
     }
+
 }
