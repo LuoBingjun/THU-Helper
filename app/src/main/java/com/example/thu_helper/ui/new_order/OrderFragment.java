@@ -332,7 +332,7 @@ public class OrderFragment extends Fragment {
                 Date _Date = new Date(year - 1900, monthOfYear, dayOfMonth);
                 date.setYear(year - 1900);
                 date.setMonth(monthOfYear);
-                date.setDate(dayOfMonth + 1);
+                date.setDate(dayOfMonth);
 
                 timePickerDialog.show();
             }
