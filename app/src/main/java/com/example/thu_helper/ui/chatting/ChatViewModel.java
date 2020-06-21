@@ -8,6 +8,7 @@ import java.util.List;
 
 public class ChatViewModel extends ViewModel {
     private MutableLiveData<List<ChatMsgEntity>> messages;
+
     public ChatViewModel(){
         messages = new MutableLiveData<>();
     }

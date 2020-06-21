@@ -16,17 +16,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.data.Result;
 import com.example.thu_helper.data.model.LoggedInUser;
-import com.example.thu_helper.ui.detail.DetailViewModel;
-import com.example.thu_helper.ui.detail.RecordDetail;
 import com.example.thu_helper.utils.Global;
 
-import org.java_websocket.client.WebSocketClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,16 +34,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import io.crossbar.autobahn.websocket.WebSocketConnection;
-import io.crossbar.autobahn.websocket.WebSocketConnectionHandler;
-import io.crossbar.autobahn.websocket.exceptions.WebSocketException;
-import io.crossbar.autobahn.websocket.interfaces.IWebSocketConnectionHandler;
-import io.crossbar.autobahn.websocket.types.ConnectionResponse;
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.WebSocket;
 
 public class ChatFragment extends Fragment {
 
@@ -55,16 +45,16 @@ public class ChatFragment extends Fragment {
     private ChatListViewAdapter mAdapter;
     private Button sendBtn;
     private EditText inputText;
-    private String name;
     private ChatViewModel mViewModel;
 
-    private String publisher_id;
+    private String user_id;
     private String other_id;
 
     private String message;
 
     private ChatWebSocketClient client;
     private LoggedInUser loggedInUser;
+    private ChatMsgEntity entity;
 
     public static ChatFragment newInstance() { return new ChatFragment();}
 
@@ -75,13 +65,11 @@ public class ChatFragment extends Fragment {
         // Inflate the layout for this fragment
         View root =  inflater.inflate(R.layout.fragment_chat, container, false);
         mViewModel = ViewModelProviders.of(getActivity()).get(ChatViewModel.class);
-        initMsg();
         mViewModel.getMessages().setValue(msgList);
         mAdapter = new ChatListViewAdapter(root.getContext(),R.layout.msg_item,mViewModel.getMessages().getValue());
         inputText = root.findViewById(R.id.input_text);
         sendBtn = root.findViewById(R.id.sendMsgBtn);
         mListView = root.findViewById(R.id.msg_list_view);
-        name = "张三";
         mListView.setAdapter(mAdapter);
 
         //test chat
@@ -94,7 +82,7 @@ public class ChatFragment extends Fragment {
                 if(!content.equals("")){
                     Date date = new Date();
                     SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
-                    ChatMsgEntity msg = new ChatMsgEntity(name,dateFormat.format(date),content,ChatMsgEntity.MSG_SEND);
+                    ChatMsgEntity msg = new ChatMsgEntity(user_id,dateFormat.format(date),content,ChatMsgEntity.MSG_SEND);
                     msgList.add(msg);
                     mListView.setSelection(msgList.size());//将ListView定位到最后一行
                     inputText.setText("");
@@ -103,16 +91,15 @@ public class ChatFragment extends Fragment {
                     try {
                         jsonMessage.put("other",other_id);
                         jsonMessage.put("msg",content);
+                        jsonMessage.put("type","message");
                         message = jsonMessage.toString();
                         sendMessage();
                     } catch (JSONException e) {
-                        System.out.println(e.getMessage());
                         e.printStackTrace();
                     } catch (InterruptedException e) {
                         System.out.println(e.getMessage());
                         e.printStackTrace();
                     }catch (Exception e){
-                        System.out.println(String.format("Exception class: %s, %s",e.getClass(),e.getMessage()));
                         e.printStackTrace();
                     }
                 }
@@ -123,11 +110,31 @@ public class ChatFragment extends Fragment {
     }
 
     private void connect(){
-        client = new ChatWebSocketClient(URI.create(Global.ws_url));
+        client = new ChatWebSocketClient(URI.create(Global.ws_url)){
+            @Override
+            public void onMessage(String message) {
+                super.onMessage(message);
+                try {    //String转JSONObject
+                    JSONObject result = new JSONObject(message);
+                    if(result.get("type").equals("message")) {
+                        Date date = new Date();
+                        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+                        String sender = (String) result.get("sender");
+                        String receivedMsg = (String) result.get("msg");
+                        ChatMsgEntity msg = new ChatMsgEntity(sender,dateFormat.format(date),receivedMsg, ChatMsgEntity.MSG_RECEIVED);
+                        msgList.add(msg);
+                        mViewModel.getMessages().postValue(msgList);
+                        //mViewModel.setReceivedMsg(msg);
+                    }
+                     }
+                    catch (JSONException e) { e.printStackTrace();}
+            }
+        };
         try {
             client.connectBlocking();
             JSONObject jsonMessage =new JSONObject();
             jsonMessage.put("token",loggedInUser.token);
+            System.out.println(jsonMessage);
             client.send(jsonMessage.toString());
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -147,14 +154,12 @@ public class ChatFragment extends Fragment {
             else {
                 client.reconnectBlocking();
                 client.send(message);
-                System.out.println(String.format("client connectBlocking1: %s",client.isOpen()));
             }
         }
         else {
             client = new ChatWebSocketClient(URI.create(Global.ws_url));
             client.connectBlocking();
             client.send(message);
-            System.out.println(String.format("client connectBlocking2: %s",client.isOpen()));
         }
     }
 
@@ -170,52 +175,51 @@ public class ChatFragment extends Fragment {
         MutableLiveData<List<ChatMsgEntity>> messages = mViewModel.getMessages();
         loggedInUser = LoginRepository.getInstance().getUser();
         other_id = getArguments().getString("other_id");
-        publisher_id = loggedInUser.username;
+        user_id = loggedInUser.username;
         connect();
 
         messages.observe(this,new Observer<List<ChatMsgEntity>>() {
             @Override
             public void onChanged(List<ChatMsgEntity> chatMsgEntities) {
                 mAdapter.notifyDataSetChanged();
+                mListView.setSelection(msgList.size());
             }
         });
     }
 
-    private void initMsg(){
-        ChatMsgEntity msg1 = new ChatMsgEntity("张三","6-17 21:09","吃了吗？"
-                ,ChatMsgEntity.MSG_RECEIVED);
-        msgList.add(msg1);
+        private class ChatTask extends AsyncTask<Void, Void, Result<Boolean>> {
 
-        ChatMsgEntity msg2 = new ChatMsgEntity("李四","6-17 21:11","还没，你呢？"
-                ,ChatMsgEntity.MSG_SEND);
-        msgList.add(msg2);
-
-        ChatMsgEntity msg3 = new ChatMsgEntity("张三","6-17 21:12","我吃了。"
-                ,ChatMsgEntity.MSG_RECEIVED);
-        msgList.add(msg3);
-    }
-
-        private class ChatTask extends AsyncTask<Void, Void, Result<Boolean>>{
-
-        @Override
-        protected Result<Boolean> doInBackground(Void... voids) {
-            try {
-                OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder()
-                        .url(Global.url_prefix + "/chat/off_msg")
-                        .addHeader("Authorization","Token " + loggedInUser.token)
-                        .build();
-                Response response = client.newCall(request).execute();
-                if (response.isSuccessful()) {
-                    //JSONObject res = new JSONObject(response.body().string());
-                    System.out.println(String.format("off_message: %s",response.body().string()));
-                    return new Result.Success<>(true);
-                }
-                return new Result.Error(new Exception("请求失败，请联系网站管理员"));
-            } catch (Exception e) {
-                System.out.println(String.format("Exception: %s, Class: %s",e.getMessage(),e.getClass()));
-                return new Result.Error(new Exception("网络请求失败，请稍后重试", e));
+            @Override
+            protected Result<Boolean> doInBackground(Void... voids) {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder()
+                            .url(Global.url_prefix + "/chat/off_msg")
+                            .addHeader("Authorization", "Token " + loggedInUser.token)
+                            .build();
+                    Response response = null;
+                    response = client.newCall(request).execute();
+                    if (response.isSuccessful()) {
+                        JSONArray res = null;
+                        res = new JSONArray(response.body().string());
+                        for (int i = 0; i < res.length(); i++) {
+                            JSONObject result = res.getJSONObject(i);
+                            if (result.get("type").equals("message")) {
+                                Date date = new Date();
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+                                String sender = (String) result.get("sender");
+                                String receivedMsg = (String) result.get("msg");
+                                ChatMsgEntity msg = new ChatMsgEntity(sender, dateFormat.format(date), receivedMsg, ChatMsgEntity.MSG_RECEIVED);
+                                msgList.add(msg);
+                            }
+                        }
+                        mViewModel.getMessages().postValue(msgList);
+                        return new Result.Success<>(true);
+                    }
+                    return new Result.Error(new Exception("请求失败，请联系网站管理员"));
+                } catch (Exception e) {
+                        return new Result.Error(new Exception("网络请求失败，请稍后重试", e));
+                    }
             }
         }
-    }
 }
