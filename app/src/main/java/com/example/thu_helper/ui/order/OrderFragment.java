@@ -3,6 +3,7 @@ package com.example.thu_helper.ui.order;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.data.Result;
 import com.example.thu_helper.data.model.LoggedInUser;
+import com.example.thu_helper.ui.chatting.ChatActivity;
 import com.example.thu_helper.utils.Global;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
@@ -78,7 +80,6 @@ public class OrderFragment extends Fragment {
         sendOrderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 new OrderTask().execute(
                         orderViewModel.getTitle(),
                         orderViewModel.getBeginTime(),
@@ -123,7 +124,8 @@ public class OrderFragment extends Fragment {
                         .add("title", title)
                         .add("start_time", beginTime)
                         .add("end_time",endTime)
-                        .add("activity_info", location + "\n" + myDetail)
+                        .add("activity_info", myDetail)
+                        .add("location",location)
                         .add("reward", money)
                         .build();
                 Request request = new Request.Builder()
@@ -279,10 +281,10 @@ public class OrderFragment extends Fragment {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 //因为monthOfYear会比实际月份少一月所以这边要加1
                 String y = String.valueOf(year);
-                String mon = String.valueOf(monthOfYear);
+                String mon = String.valueOf(monthOfYear + 1);
                 String day = String.valueOf(dayOfMonth);
 
-                if(monthOfYear < 10){
+                if(monthOfYear + 1 < 10){
                     mon = "0" + mon;
                 }
                 if(dayOfMonth < 10){

@@ -27,9 +27,14 @@ public class ChatActivity extends AppCompatActivity {
         Toast.makeText(this,"Chatting", Toast.LENGTH_SHORT).show();
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_chat);
+        String other_id = getIntent().getStringExtra("other_id");
         if(savedInstanceState == null){
+            Bundle bundle = new Bundle();
+            bundle.putString("other_id",other_id);
+            ChatFragment chatFragment = ChatFragment.newInstance();
+            chatFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.chat_container,ChatFragment.newInstance())
+                    .replace(R.id.chat_container,chatFragment)
                     .commitNow();
         }
 

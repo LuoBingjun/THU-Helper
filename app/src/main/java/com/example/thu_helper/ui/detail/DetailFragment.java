@@ -359,6 +359,7 @@ public class DetailFragment extends Fragment {
                 }
                 return new Result.Error(new Exception("请求失败，请联系网站管理员"));
             } catch (Exception e) {
+                System.out.println(e.getMessage());
                 return new Result.Error(new Exception("网络请求失败，请稍后重试", e));
             }
         }
