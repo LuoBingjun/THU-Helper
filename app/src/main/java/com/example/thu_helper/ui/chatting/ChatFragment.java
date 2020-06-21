@@ -1,5 +1,6 @@
 package com.example.thu_helper.ui.chatting;
 
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -9,12 +10,13 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.util.Log;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -22,15 +24,28 @@ import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.data.Result;
 import com.example.thu_helper.data.model.LoggedInUser;
-import com.example.thu_helper.ui.detail.DetailViewModel;
-import com.example.thu_helper.ui.detail.RecordDetail;
 import com.example.thu_helper.utils.Global;
+import com.tencent.map.geolocation.TencentLocation;
+import com.tencent.map.geolocation.TencentLocationListener;
+import com.tencent.map.geolocation.TencentLocationManager;
+import com.tencent.map.geolocation.TencentLocationRequest;
+import com.tencent.tencentmap.mapsdk.maps.CameraUpdateFactory;
+import com.tencent.tencentmap.mapsdk.maps.LocationSource;
+import com.tencent.tencentmap.mapsdk.maps.MapView;
+import com.tencent.tencentmap.mapsdk.maps.TencentMap;
+import com.tencent.tencentmap.mapsdk.maps.TextureMapView;
+import com.tencent.tencentmap.mapsdk.maps.model.BitmapDescriptorFactory;
+import com.tencent.tencentmap.mapsdk.maps.model.IOverlay;
+import com.tencent.tencentmap.mapsdk.maps.model.LatLng;
+import com.tencent.tencentmap.mapsdk.maps.model.LatLngBounds;
+import com.tencent.tencentmap.mapsdk.maps.model.Marker;
+import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions;
+import com.tencent.tencentmap.mapsdk.maps.model.TencentMapGestureListener;
 
 import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,13 +57,11 @@ import io.crossbar.autobahn.websocket.WebSocketConnectionHandler;
 import io.crossbar.autobahn.websocket.exceptions.WebSocketException;
 import io.crossbar.autobahn.websocket.interfaces.IWebSocketConnectionHandler;
 import io.crossbar.autobahn.websocket.types.ConnectionResponse;
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.WebSocket;
 
-public class ChatFragment extends Fragment {
+public class ChatFragment extends Fragment implements TencentLocationListener {
 
     private ListView mListView;
     private List<ChatMsgEntity> msgList = new ArrayList<ChatMsgEntity>();
@@ -65,6 +78,14 @@ public class ChatFragment extends Fragment {
 
     private ChatWebSocketClient client;
     private LoggedInUser loggedInUser;
+
+    private FrameLayout mFrameLayout;
+    private TencentLocationManager mLocationManager;
+    private TencentLocationRequest mLocationRequest;
+    private TencentMap mTencentMap;
+    private Marker mOtherMarker = null;
+    private Marker mMyMarker = null;
+    private boolean dragged = false;
 
     public static ChatFragment newInstance() { return new ChatFragment();}
 
@@ -118,7 +139,11 @@ public class ChatFragment extends Fragment {
                 }
             }
         });
+
         new ChatTask().execute();
+
+        mFrameLayout = root.findViewById(R.id.frameLayout);
+        initLocation();
         return root;
     }
 
@@ -162,6 +187,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mLocationManager.removeUpdates(this);
     }
 
     @Override
@@ -195,7 +221,155 @@ public class ChatFragment extends Fragment {
         msgList.add(msg3);
     }
 
-        private class ChatTask extends AsyncTask<Void, Void, Result<Boolean>>{
+    private void initLocation() {
+        // Init
+        mLocationManager = TencentLocationManager.getInstance(getActivity().getApplicationContext());
+        mLocationRequest = TencentLocationRequest.create();
+        mLocationRequest.setInterval(3000);
+
+        TextureMapView mapView = new TextureMapView(getContext());
+        mFrameLayout.addView(mapView);
+        mTencentMap = mapView.getMap();
+
+        mLocationManager.requestLocationUpdates(mLocationRequest, this);
+
+        mTencentMap.setOnMapClickListener(new TencentMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                dragged = true;
+            }
+        });
+
+        mTencentMap.addTencentMapGestureListener(new TencentMapGestureListener() {
+            @Override
+            public boolean onDoubleTap(float v, float v1) {
+                dragged = true;
+                return false;
+            }
+
+            @Override
+            public boolean onSingleTap(float v, float v1) {
+                dragged = true;
+                return false;
+            }
+
+            @Override
+            public boolean onFling(float v, float v1) {
+                dragged = true;
+                return false;
+            }
+
+            @Override
+            public boolean onScroll(float v, float v1) {
+                dragged = true;
+                return false;
+            }
+
+            @Override
+            public boolean onLongPress(float v, float v1) {
+                dragged = true;
+                return false;
+            }
+
+            @Override
+            public boolean onDown(float v, float v1) {
+                dragged = true;
+                return false;
+            }
+
+            @Override
+            public boolean onUp(float v, float v1) {
+                dragged = true;
+                return false;
+            }
+
+            @Override
+            public void onMapStable() {
+                dragged = false;
+            }
+        });
+
+        setOtherLocation(40.042893, 116.269673, "北京市");
+    }
+
+    private void setMyLocation(double latitude, double longtitude, String name) {
+        LatLng position = new LatLng(latitude, longtitude);
+        if (mMyMarker == null){
+            dragged = false;
+            MarkerOptions options = new MarkerOptions(position)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_red))
+                    .anchor(0.5f, 1);
+            mMyMarker = mTencentMap.addMarker(options);
+        }
+        mMyMarker.setPosition(position);
+
+        if (!dragged) {
+            List<IOverlay> overlays = new ArrayList<>();
+            overlays.add(mMyMarker);
+            if(mOtherMarker != null) {
+                overlays.add(mOtherMarker);
+            }
+            mTencentMap.moveCamera(CameraUpdateFactory.newCameraPosition(
+                    mTencentMap.calculateZoomToSpanLevel(
+                            overlays, null,
+                            0, 0, 0, 0)));
+        }
+    }
+
+    private void setOtherLocation(double latitude, double longtitude, String name){
+        LatLng position = new LatLng(latitude,longtitude);
+        if (mOtherMarker == null){
+            dragged = false;
+            MarkerOptions options = new MarkerOptions(position)
+                    .title("对方")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_blue))
+                    .anchor(0.5f, 1);
+            mOtherMarker = mTencentMap.addMarker(options);
+            mOtherMarker.showInfoWindow();
+        }
+        mOtherMarker.setPosition(position);
+        mOtherMarker.setSnippet(name);
+
+        if(!dragged){
+            List<IOverlay> overlays = new ArrayList<>();
+            overlays.add(mOtherMarker);
+            if(mMyMarker != null) {
+                overlays.add(mMyMarker);
+            }
+            mTencentMap.moveCamera(CameraUpdateFactory.newCameraPosition(
+                    mTencentMap.calculateZoomToSpanLevel(
+                            overlays, null,
+                            0, 0, 0, 0)));
+        }
+    }
+
+
+    @Override
+    public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
+        //其中 locationChangeListener 为 LocationSource.active 返回给用户的位置监听器
+        //用户通过这个监听器就可以设置地图的定位点位置
+//        if(i == TencentLocation.ERROR_OK && mLocationChangedListener != null){
+//            Location location = new Location(tencentLocation.getProvider());
+//            //设置经纬度
+//            location.setLatitude(tencentLocation.getLatitude());
+//            location.setLongitude(tencentLocation.getLongitude());
+//            //设置精度，这个值会被设置为定位点上表示精度的圆形半径
+//            location.setAccuracy(tencentLocation.getAccuracy());
+//            //设置定位标的旋转角度，注意 tencentLocation.getBearing() 只有在 gps 时才有可能获取
+//            location.setBearing((float) tencentLocation.getBearing());
+//            //将位置信息返回给地图
+//            mLocationChangedListener.onLocationChanged(location);
+//        }
+        setMyLocation(tencentLocation.getLatitude(), tencentLocation.getLongitude(), tencentLocation.getName());
+    }
+
+    @Override
+    public void onStatusUpdate(String s, int i, String s1) {
+
+    }
+
+
+    private class ChatTask extends AsyncTask<Void, Void, Result<Boolean>>{
 
         @Override
         protected Result<Boolean> doInBackground(Void... voids) {
