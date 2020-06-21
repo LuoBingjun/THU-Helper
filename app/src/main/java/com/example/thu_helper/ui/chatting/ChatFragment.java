@@ -95,7 +95,8 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
         View root =  inflater.inflate(R.layout.fragment_chat, container, false);
         mViewModel = ViewModelProviders.of(getActivity()).get(ChatViewModel.class);
         mViewModel.getMessages().setValue(msgList);
-        mAdapter = new ChatListViewAdapter(root.getContext(),R.layout.msg_item,mViewModel.getMessages().getValue());
+        other_id = getArguments().getString("other_id");
+        mAdapter = new ChatListViewAdapter(root.getContext(),R.layout.msg_item,mViewModel.getMessages().getValue(),other_id);
         inputText = root.findViewById(R.id.input_text);
         sendBtn = root.findViewById(R.id.sendMsgBtn);
         mListView = root.findViewById(R.id.msg_list_view);
@@ -213,7 +214,6 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
         super.onActivityCreated(savedInstanceState);
         MutableLiveData<List<ChatMsgEntity>> messages = mViewModel.getMessages();
         loggedInUser = LoginRepository.getInstance().getUser();
-        other_id = getArguments().getString("other_id");
         user_id = loggedInUser.username;
         connect();
 
