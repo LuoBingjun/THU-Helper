@@ -9,7 +9,7 @@
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_order_fill_24dp"
-        android:title="@string/title_order" />
+        android:title="@string/title_process" />
 
     <item
         android:id="@+id/navigation_notifications"

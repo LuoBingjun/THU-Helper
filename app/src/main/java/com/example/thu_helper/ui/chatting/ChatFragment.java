@@ -138,21 +138,23 @@ public class ChatFragment extends Fragment {
     }
 
     private void sendMessage() throws InterruptedException {
+
         if(client != null) {
             if(client.isOpen()){
                 client.send(message);
+                System.out.println(message);
             }
             else {
                 client.reconnectBlocking();
                 client.send(message);
-                System.out.println(String.format("null client connectBlocking1: %s",client.isOpen()));
+                System.out.println(String.format("client connectBlocking1: %s",client.isOpen()));
             }
         }
         else {
             client = new ChatWebSocketClient(URI.create(Global.ws_url));
             client.connectBlocking();
             client.send(message);
-            System.out.println(String.format("null client connectBlocking2: %s",client.isOpen()));
+            System.out.println(String.format("client connectBlocking2: %s",client.isOpen()));
         }
     }
 
@@ -170,12 +172,6 @@ public class ChatFragment extends Fragment {
         other_id = getArguments().getString("other_id");
         publisher_id = loggedInUser.username;
         connect();
-        //        client = new ChatWebSocketClient(URI.create(Global.ws_url));
-        //        try {
-        //            client.connectBlocking();
-        //        } catch (InterruptedException e) {
-        //            e.printStackTrace();
-        //        }
 
         messages.observe(this,new Observer<List<ChatMsgEntity>>() {
             @Override

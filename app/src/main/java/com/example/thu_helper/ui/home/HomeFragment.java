@@ -29,7 +29,9 @@ import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.data.Result;
 import com.example.thu_helper.data.model.LoggedInUser;
+import com.example.thu_helper.ui.new_order.NewOrderActivity;
 import com.example.thu_helper.utils.Global;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
@@ -65,6 +67,7 @@ public class HomeFragment extends Fragment {
     private CardAdapter cardAdapter;
     private NiceSpinner mNiceSpinner;
     private SearchView mSearchView;
+    private FloatingActionButton mAddButton;
 
     private LiveData<String> mWord;
     private LiveData<String> mTime;
@@ -126,8 +129,19 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        // Init AddButton
+        mAddButton = root.findViewById(R.id.floatingActionButton);
+        mAddButton.setOnClickListener(onAddButtonClicked);
         return root;
     }
+
+    private View.OnClickListener onAddButtonClicked = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(), NewOrderActivity.class);
+            startActivity(intent);
+        }
+    };
 
     private OnSpinnerItemSelectedListener onSpinnerSelected = new OnSpinnerItemSelectedListener() {
         @Override
