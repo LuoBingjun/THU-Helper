@@ -1,4 +1,4 @@
-package com.example.thu_helper;
+package com.example.thu_helper.ui;
 
 import android.app.ActionBar;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 
+import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginDataSource;
 import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.ui.login.LoginActivity;

@@ -1,7 +1,5 @@
 package com.example.thu_helper.ui.login;
 
-import android.app.Activity;
-
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -23,7 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.thu_helper.MainActivity;
+import com.example.thu_helper.ui.MainActivity;
 import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.ui.register.RegisterActivity;
