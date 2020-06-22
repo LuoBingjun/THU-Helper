@@ -212,6 +212,7 @@ public class DetailFragment extends Fragment {
                         public void onClick(View v) {
                             Intent intent = new Intent(getActivity(), ChatActivity.class);
                             intent.putExtra("other_id", record.publisher_id);
+                            intent.putExtra("activity_title",itemTitle.getText());
                             getActivity().startActivity(intent);
                         }
                     };
@@ -228,6 +229,7 @@ public class DetailFragment extends Fragment {
                         public void onClick(View v) {
                             Intent intent = new Intent(getActivity(), ChatActivity.class);
                             intent.putExtra("other_id", record.acceptor_id);
+                            intent.putExtra("activity_title",itemTitle.getText());
                             getActivity().startActivity(intent);
                         }
                     };

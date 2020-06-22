@@ -51,13 +51,15 @@ public class ChatListViewAdapter extends ArrayAdapter<ChatMsgEntity> {
     private String head_portrait_right_name;
     private String head_portrait_left_name;
     private String other_id;
+    private String activity_title;
     ViewHolder viewHolder;
     LoggedInUser loggedInUser = LoginRepository.getInstance().getUser();
-    public ChatListViewAdapter(Context context,int textViewresourceId, List<ChatMsgEntity> datas,String other_id){
+    public ChatListViewAdapter(Context context,int textViewresourceId, List<ChatMsgEntity> datas,String other_id,String activity_title){
         super(context, textViewresourceId, datas);
         resourceId = textViewresourceId;
         mInflater = LayoutInflater.from(context);
         this.other_id = other_id;
+        this.activity_title = activity_title;
         new headLeftTask().execute();
         new headRightTask().execute();
     }
@@ -87,33 +89,39 @@ public class ChatListViewAdapter extends ArrayAdapter<ChatMsgEntity> {
             viewHolder = (ViewHolder) view.getTag();
         }
 
-        switch (msg.getType()){
-            case ChatMsgEntity.MSG_RECEIVED:
-                viewHolder.leftLayout.setVisibility(View.VISIBLE);
-                viewHolder.rightLayout.setVisibility(View.GONE);
-                viewHolder.username_left.setText(msg.getName());
-                viewHolder.sendTime_left.setText(msg.getDate());
-                viewHolder.msg_left.setText(msg.getText());
-                if(head_portrait_left_name != null && !head_portrait_left_name.equals("null")){
-                    Glide.with(getContext()).load(Global.url_prefix + "/static/images/"+head_portrait_left_name)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(viewHolder.userhead_left);
-                }
+        if(msg.getActivityTitle().equals(activity_title)) {
+            switch (msg.getType()) {
+                case ChatMsgEntity.MSG_RECEIVED:
+                    viewHolder.leftLayout.setVisibility(View.VISIBLE);
+                    viewHolder.rightLayout.setVisibility(View.GONE);
+                    viewHolder.username_left.setText(msg.getName());
+                    viewHolder.sendTime_left.setText(msg.getDate());
+                    viewHolder.msg_left.setText(msg.getText());
+                    if (head_portrait_left_name != null && !head_portrait_left_name.equals("null")) {
+                        Glide.with(getContext()).load(Global.url_prefix + "/static/images/" + head_portrait_left_name)
+                                .apply(RequestOptions.circleCropTransform())
+                                .into(viewHolder.userhead_left);
+                    }
 //                    new DownloadImageLeftTask().execute(Global.url_prefix + "/static/images/"+head_portrait_left_name);
-                break;
-            case ChatMsgEntity.MSG_SEND:
-                viewHolder.leftLayout.setVisibility(View.GONE);
-                viewHolder.rightLayout.setVisibility(View.VISIBLE);
-                viewHolder.username_right.setText(msg.getName());
-                viewHolder.sendTime_right.setText(msg.getDate());
-                viewHolder.msg_right.setText(msg.getText());
-                if(head_portrait_right_name != null && !head_portrait_right_name.equals("null")){
-                    Glide.with(getContext()).load(loggedInUser.avater)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(viewHolder.userhead_right);
-                }
+                    break;
+                case ChatMsgEntity.MSG_SEND:
+                    viewHolder.leftLayout.setVisibility(View.GONE);
+                    viewHolder.rightLayout.setVisibility(View.VISIBLE);
+                    viewHolder.username_right.setText(msg.getName());
+                    viewHolder.sendTime_right.setText(msg.getDate());
+                    viewHolder.msg_right.setText(msg.getText());
+                    if (head_portrait_right_name != null && !head_portrait_right_name.equals("null")) {
+                        Glide.with(getContext()).load(loggedInUser.avater)
+                                .apply(RequestOptions.circleCropTransform())
+                                .into(viewHolder.userhead_right);
+                    }
 //                    new DownloadImageRightTask().execute(Global.url_prefix + "/static/images/"+head_portrait_right_name);
-                break;
+                    break;
+            }
+        }
+        else {
+            viewHolder.leftLayout.setVisibility(View.GONE);
+            viewHolder.rightLayout.setVisibility(View.GONE);
         }
 
         return view;
