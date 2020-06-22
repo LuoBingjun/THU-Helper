@@ -248,20 +248,13 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
         // Init
         mLocationManager = TencentLocationManager.getInstance(getActivity().getApplicationContext());
         mLocationRequest = TencentLocationRequest.create();
-        mLocationRequest.setInterval(3000);
+        mLocationRequest.setInterval(5000);
 
         TextureMapView mapView = new TextureMapView(getContext());
         mFrameLayout.addView(mapView);
         mTencentMap = mapView.getMap();
 
         mLocationManager.requestLocationUpdates(mLocationRequest, this);
-
-        mTencentMap.setOnMapClickListener(new TencentMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                dragged = true;
-            }
-        });
 
         mTencentMap.addTencentMapGestureListener(new TencentMapGestureListener() {
             @Override
