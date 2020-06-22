@@ -1,13 +1,17 @@
 package com.example.thu_helper.ui;
 
 import android.app.ActionBar;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.Window;
 
+import com.example.thu_helper.MyReceiver;
 import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginDataSource;
 import com.example.thu_helper.data.LoginRepository;
@@ -20,6 +24,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     LoginRepository loginRepository = LoginRepository.getInstance();
@@ -35,15 +41,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-//        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-//                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
-//                .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-        
-    }
 
+
+        Intent intent = new Intent(getApplicationContext(), MyReceiver.class);
+        PendingIntent sender = PendingIntent.getBroadcast(
+                this, 0, intent, 0);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.SECOND, 5);
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        am.setRepeating(AlarmManager.RTC_WAKEUP,
+                calendar.getTimeInMillis(), 5 * 1000, sender);
+    }
 }
