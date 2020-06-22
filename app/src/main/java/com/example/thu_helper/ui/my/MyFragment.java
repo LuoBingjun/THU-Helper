@@ -1,6 +1,5 @@
 package com.example.thu_helper.ui.my;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.Observable;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -23,13 +21,12 @@ import com.example.thu_helper.BR;
 import com.example.thu_helper.R;
 import com.example.thu_helper.data.LoginRepository;
 import com.example.thu_helper.data.model.LoggedInUser;
+import com.example.thu_helper.ui.AboutActivity;
 import com.example.thu_helper.ui.list.ListActivity;
 import com.example.thu_helper.ui.setting.SettingActivity;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
-
-import butterknife.BindView;
 
 public class MyFragment extends Fragment {
     ViewDataBinding binding;
@@ -153,7 +150,8 @@ public class MyFragment extends Fragment {
         View.OnClickListener onClickListener4 = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "关于我们", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), AboutActivity.class);
+                startActivity(intent);
             }
         };
 
