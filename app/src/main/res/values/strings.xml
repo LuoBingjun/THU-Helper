@@ -8,6 +8,7 @@
     <string name="title_register">注册</string>
     <string name="title_chat">在线交流</string>
     <string name="title_new_order">发布新订单</string>
+    <string name="title_about">关于我们</string>
     <string name="prompt_username">用户名</string>
     <string name="prompt_password">密码</string>
     <string name="action_sign_in">登录</string>
