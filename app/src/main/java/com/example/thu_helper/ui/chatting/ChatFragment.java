@@ -1,8 +1,5 @@
 package com.example.thu_helper.ui.chatting;
 
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -12,9 +9,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.os.Environment;
-import android.os.Looper;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,14 +28,13 @@ import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
 import com.tencent.tencentmap.mapsdk.maps.CameraUpdateFactory;
-import com.tencent.tencentmap.mapsdk.maps.LocationSource;
-import com.tencent.tencentmap.mapsdk.maps.MapView;
+
 import com.tencent.tencentmap.mapsdk.maps.TencentMap;
 import com.tencent.tencentmap.mapsdk.maps.TextureMapView;
 import com.tencent.tencentmap.mapsdk.maps.model.BitmapDescriptorFactory;
 import com.tencent.tencentmap.mapsdk.maps.model.IOverlay;
 import com.tencent.tencentmap.mapsdk.maps.model.LatLng;
-import com.tencent.tencentmap.mapsdk.maps.model.LatLngBounds;
+
 import com.tencent.tencentmap.mapsdk.maps.model.Marker;
 import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.maps.model.TencentMapGestureListener;
@@ -50,19 +43,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import io.crossbar.autobahn.websocket.WebSocketConnection;
-import io.crossbar.autobahn.websocket.WebSocketConnectionHandler;
-import io.crossbar.autobahn.websocket.exceptions.WebSocketException;
-import io.crossbar.autobahn.websocket.interfaces.IWebSocketConnectionHandler;
-import io.crossbar.autobahn.websocket.types.ConnectionResponse;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
