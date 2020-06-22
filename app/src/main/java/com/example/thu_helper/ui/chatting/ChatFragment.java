@@ -1,6 +1,5 @@
 package com.example.thu_helper.ui.chatting;
 
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -10,8 +9,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.os.Looper;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,14 +28,13 @@ import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
 import com.tencent.tencentmap.mapsdk.maps.CameraUpdateFactory;
-import com.tencent.tencentmap.mapsdk.maps.LocationSource;
-import com.tencent.tencentmap.mapsdk.maps.MapView;
+
 import com.tencent.tencentmap.mapsdk.maps.TencentMap;
 import com.tencent.tencentmap.mapsdk.maps.TextureMapView;
 import com.tencent.tencentmap.mapsdk.maps.model.BitmapDescriptorFactory;
 import com.tencent.tencentmap.mapsdk.maps.model.IOverlay;
 import com.tencent.tencentmap.mapsdk.maps.model.LatLng;
-import com.tencent.tencentmap.mapsdk.maps.model.LatLngBounds;
+
 import com.tencent.tencentmap.mapsdk.maps.model.Marker;
 import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.maps.model.TencentMapGestureListener;
@@ -52,11 +48,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import io.crossbar.autobahn.websocket.WebSocketConnection;
-import io.crossbar.autobahn.websocket.WebSocketConnectionHandler;
-import io.crossbar.autobahn.websocket.exceptions.WebSocketException;
-import io.crossbar.autobahn.websocket.interfaces.IWebSocketConnectionHandler;
-import io.crossbar.autobahn.websocket.types.ConnectionResponse;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -64,14 +56,15 @@ import okhttp3.Response;
 public class ChatFragment extends Fragment implements TencentLocationListener {
 
     private ListView mListView;
-    private List<ChatMsgEntity> msgList = new ArrayList<ChatMsgEntity>();
+    private static List<ChatMsgEntity> msgList = new ArrayList<ChatMsgEntity>();
     private ChatListViewAdapter mAdapter;
     private Button sendBtn;
     private EditText inputText;
     private ChatViewModel mViewModel;
 
-    private String user_id;
+    private static String user_id;
     private String other_id;
+    private static String activity_title;
 
     private String message;
 
@@ -99,7 +92,8 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
         mViewModel = ViewModelProviders.of(getActivity()).get(ChatViewModel.class);
         mViewModel.getMessages().setValue(msgList);
         other_id = getArguments().getString("other_id");
-        mAdapter = new ChatListViewAdapter(root.getContext(),R.layout.msg_item,mViewModel.getMessages().getValue(),other_id);
+        activity_title = getArguments().getString("activity_title");
+        mAdapter = new ChatListViewAdapter(root.getContext(),R.layout.msg_item,mViewModel.getMessages().getValue(),other_id,activity_title);
         inputText = root.findViewById(R.id.input_text);
         sendBtn = root.findViewById(R.id.sendMsgBtn);
         mListView = root.findViewById(R.id.msg_list_view);
@@ -115,7 +109,7 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
                 if(!content.equals("")){
                     Date date = new Date();
                     SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
-                    ChatMsgEntity msg = new ChatMsgEntity(user_id,dateFormat.format(date),content,ChatMsgEntity.MSG_SEND);
+                    ChatMsgEntity msg = new ChatMsgEntity(user_id,dateFormat.format(date),content,ChatMsgEntity.MSG_SEND,activity_title);
                     msgList.add(msg);
                     mListView.setSelection(msgList.size());//将ListView定位到最后一行
                     inputText.setText("");
@@ -165,6 +159,7 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
         return root;
     }
 
+
     private void connect(){
         client = new ChatWebSocketClient(URI.create(Global.ws_url)){
             @Override
@@ -177,7 +172,7 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
                         SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
                         String sender = (String) result.get("sender");
                         String receivedMsg = (String) result.get("msg");
-                        ChatMsgEntity msg = new ChatMsgEntity(sender,dateFormat.format(date),receivedMsg, ChatMsgEntity.MSG_RECEIVED);
+                        ChatMsgEntity msg = new ChatMsgEntity(sender,dateFormat.format(date),receivedMsg, ChatMsgEntity.MSG_RECEIVED,activity_title);
                         msgList.add(msg);
                         mViewModel.getMessages().postValue(msgList);
                         //mViewModel.setReceivedMsg(msg);
@@ -210,7 +205,7 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
         if(client != null) {
             if(client.isOpen()){
                 client.send(message);
-                System.out.println(message);
+                //System.out.println(message);
             }
             else {
                 client.reconnectBlocking();
@@ -229,6 +224,7 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
     public void onDestroy() {
         super.onDestroy();
         mLocationManager.removeUpdates(this);
+        //saveToLocal();
     }
 
     @Override
@@ -421,7 +417,7 @@ public class ChatFragment extends Fragment implements TencentLocationListener {
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
                                 String sender = (String) result.get("sender");
                                 String receivedMsg = (String) result.get("msg");
-                                ChatMsgEntity msg = new ChatMsgEntity(sender, dateFormat.format(date), receivedMsg, ChatMsgEntity.MSG_RECEIVED);
+                                ChatMsgEntity msg = new ChatMsgEntity(sender, dateFormat.format(date), receivedMsg, ChatMsgEntity.MSG_RECEIVED,activity_title);
                                 msgList.add(msg);
                             }
                             else if (result.get("type").equals("location")) {
