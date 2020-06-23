@@ -63,13 +63,13 @@ public class RegisterActivity extends AppCompatActivity {
                     mEmailEdit.setError(getString(registerFormState.getEmailError()));
                 }
                 if(registerFormState.getUsernameError() != null){
-                    mNicknameEdit.setError(getString(registerFormState.getUsernameError()));
+                    mUsernameEdit.setError(getString(registerFormState.getUsernameError()));
                 }
                 if(registerFormState.getPasswordError() != null){
                     mPasswordEdit.setError(getString(registerFormState.getPasswordError()));
                 }
                 if(registerFormState.getRePasswordError() != null){
-                    mRePasswardEdit.setError(registerFormState.getRePasswordString());
+                    mRePasswardEdit.setError(getString(registerFormState.getRePasswordError()));
                 }
             }
         }
@@ -89,13 +89,13 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                registerViewModel.registerDataChanged(mEmailEdit.getText().toString(), mNicknameEdit.getText().toString()
+                registerViewModel.registerDataChanged(mEmailEdit.getText().toString(), mUsernameEdit.getText().toString()
                 , mPasswordEdit.getText().toString(), mRePasswardEdit.getText().toString());
             }
         };
 
         mEmailEdit.addTextChangedListener(registerTextWatcher);
-        mNicknameEdit.addTextChangedListener(registerTextWatcher);
+        mUsernameEdit.addTextChangedListener(registerTextWatcher);
         mPasswordEdit.addTextChangedListener(registerTextWatcher);
         mRePasswardEdit.addTextChangedListener(registerTextWatcher);
 

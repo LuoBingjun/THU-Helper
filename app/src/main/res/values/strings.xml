@@ -14,8 +14,10 @@
     <string name="action_sign_in">登录</string>
     <string name="action_sign_in_short">登录</string>
     <string name="welcome">"欢迎回来，"</string>
-    <string name="invalid_username">用户名有误</string>
+    <string name="invalid_email">请输入正确的清华邮箱地址</string>
+    <string name="invalid_username">请输入正确的用户名</string>
     <string name="invalid_password">密码必须不少于6个字符</string>
+    <string name="invalid_repassword">确认密码不一致</string>
     <string name="login_failed">"登录失败，请检查用户名和密码后重试"</string>
     <string name="title_activity_person">个人信息</string>
 

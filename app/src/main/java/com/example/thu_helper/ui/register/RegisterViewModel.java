@@ -20,7 +20,7 @@ public class RegisterViewModel extends ViewModel {
 
     public void registerDataChanged(String email,String name,String password,String rePassword) {
         if (!isEmailValid(email)) {
-            registerFormState.setValue(new RegisterFormState(R.string.prompt_username,null, null,null));
+            registerFormState.setValue(new RegisterFormState(R.string.invalid_email,null, null,null));
         }
         else if(!isNameValid(name)){
             registerFormState.setValue(new RegisterFormState(null,R.string.invalid_username,null,null));
@@ -29,7 +29,7 @@ public class RegisterViewModel extends ViewModel {
             registerFormState.setValue(new RegisterFormState(null,null,R.string.invalid_password,null));
         }
         else if(!checkPassword(password,rePassword)){
-            registerFormState.setValue(new RegisterFormState(null,null,null,1));
+            registerFormState.setValue(new RegisterFormState(null,null,null,R.string.invalid_repassword));
         }
         else {
             registerFormState.setValue(new RegisterFormState(true));
@@ -40,11 +40,11 @@ public class RegisterViewModel extends ViewModel {
         if(email == null)
             return false;
 
-        if(email.contains("@")){
-            return Patterns.EMAIL_ADDRESS.matcher(email).matches();
-        }else {
-            return !email.trim().isEmpty();
-        }
+        String rule = "\\w+([-+.]\\w+)*@(\\w+\\.)*tsinghua\\.edu\\.cn";
+        Pattern pattern = Pattern.compile(rule);
+        Matcher matcher = pattern.matcher(email);
+
+        return matcher.matches();
     }
 
     private boolean isPasswordValid(String password){

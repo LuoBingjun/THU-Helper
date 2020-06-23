@@ -50,10 +50,6 @@ public class RegisterFormState {
         return rePasswordError;
     }
 
-    public String getRePasswordString(){
-            return rePasswordString;
-    }
-
     boolean isDataValid() {
         return isDataValid;
     }
